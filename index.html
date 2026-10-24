@@ -179,6 +179,12 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 .account-panel label{display:block;color:#c8b28f;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px}
 .account-panel input{width:100%;background:#080707;color:#f3e6d5;border:1px solid #49382b;padding:12px;outline:none}.account-panel input:focus{border-color:#c5a578}
 .account-actions{display:flex;gap:8px;margin-top:17px;flex-wrap:wrap}.account-actions button{flex:1;min-width:100px}.account-close{position:absolute;right:12px;top:10px;background:none;border:0;color:#e6d3b5;font-size:24px}.account-message{color:#d8b985;font-size:12px;margin-top:10px;white-space:pre-wrap}.account-switch{border:0;background:none;color:#d8b985;text-decoration:underline;padding:8px 0;font-size:12px}
+/* Keep authentication options visible even when hero secondary buttons are hidden globally. */
+.account-panel .account-actions #accountGoogle{display:inline-flex;align-items:center;justify-content:center;flex:1 1 100%;width:100%;min-height:42px;margin-top:0;background:#080707;color:#ead8c0;border:1px solid #8c704d;font:600 10px 'DM Sans',sans-serif;letter-spacing:1px;text-transform:uppercase}
+.account-panel .account-actions #accountGoogle:hover{background:#211711;border-color:#c5a578;color:#f5e6d1}
+.account-panel #accountSwitch{display:inline-block;margin-top:12px;font:12px 'DM Sans',sans-serif;cursor:pointer;position:relative;z-index:1}
+.account-panel #accountForm{display:block}
+
 .profile-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.profile-stat{border:1px solid #483629;padding:12px 8px;text-align:center;background:#0a0807}.profile-stat strong{display:block;font-size:23px;color:#d6b78b}.profile-stat span{font-size:9px;color:#bca991;text-transform:uppercase;letter-spacing:.8px}
 .account-order{padding:12px 0;border-top:1px solid #3c2d24;font-size:12px;display:flex;justify-content:space-between;gap:12px}.account-order strong{color:#e4c9a0}.account-empty{padding:16px 0;color:#bcae9c;font-size:12px}
 @media(max-width:520px){.nav{gap:8px}.account-nav{gap:4px}.account-nav .navbtn{padding:8px 7px;font-size:9px}.account-panel{padding:20px}}
