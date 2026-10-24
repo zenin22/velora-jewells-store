@@ -84,7 +84,7 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
     cart={};saveCart();document.getElementById('checkoutForm').style.display='none';document.getElementById('cartOverlay').classList.remove('open');
     toast('Order confirmed: '+verified.order.order_number);
     alert('Thank you for shopping with Velora Jewells!\nOrder: '+verified.order.order_number+'\nProduct subtotal: '+money(verified.order.subtotal_inr)+'\nPaid now: '+money(verified.order.paid_amount_inr)+'\nDue at delivery: '+money(verified.order.amount_due_inr));
-   }catch(ex){err.textContent=ex.message;btn.disabled=false;btn.textContent='Retry verification';}
+   }catch(ex){err.textContent=ex.message+' Do not submit another payment if money was deducted; contact support with the payment ID.';btn.disabled=true;btn.textContent='Payment review needed';}
   }};
   const razorpay=new Razorpay(options);razorpay.on('payment.failed',r=>{err.textContent=r.error?.description||'Payment failed. No order is confirmed.';btn.disabled=false;btn.textContent=payment_method==='cod'?'Pay ₹70 advance':'Pay full amount'});razorpay.open();
  }catch(ex){err.textContent=ex.message;btn.disabled=false;btn.textContent=payment_method==='cod'?'Pay ₹70 advance':'Pay full amount'}
