@@ -44,9 +44,9 @@
 <main id="dashboardApp" class="hidden">
  <section class="hero">
   <div class="welcome">
-   <div class="section-kicker"><span class="live-dot"></span> Your store at a glance</div>
-   <h1 id="greeting">Good day<span>.</span></h1>
-   <p>Everything important in one place. Track sales, check orders, manage your collection and see the margin from real sales.</p>
+   <div class="section-kicker"><span class="live-dot"></span> <span id="greeting">Good day</span> · Your store at a glance</div>
+   <h1>Welcome back, <span>Prakrit.</span></h1>
+   <p>Your Velora Jewells workspace is ready, Prakrit. Track sales, check orders, manage your collection and see the margin from real sales.</p>
    <div class="welcome-meta"><span class="tag" id="welcomeDate">Loading date…</span><span class="tag" id="adminEmail">Admin access verified</span></div>
   </div>
   <div class="clockcard">
@@ -126,7 +126,7 @@ function updateClock(){
  $('welcomeDate').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:TZ,weekday:'short',day:'2-digit',month:'short',year:'numeric'}).format(now);
  const hour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',hourCycle:'h23'}).format(now));
  const greeting=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
- $('greeting').innerHTML=escapeHtml(greeting)+'<span>.</span>';
+ $('greeting').textContent=greeting;
 }
 function orderProfit(order){
  const items=order.order_items||[];
