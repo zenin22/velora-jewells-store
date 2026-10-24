@@ -40,13 +40,13 @@ Deno.serve(async (req) => {
     if ([...merged.values()].some(q => q > 20)) return reply({ error: "Maximum 20 of each item per order." }, 400);
     const supabase = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
     const ids = [...merged.keys()];
-    const { data: products, error } = await supabase.from("products").select("id,name,price_inr,stock_quantity,is_active").in("id", ids);
+    const { data: products, error } = await supabase.from("products").select("id,name,price_inr,stock_quantity,is_active,is_sold_out").in("id", ids);
     if (error) throw error;
     if (!products || products.length !== ids.length) return reply({ error: "One or more products are no longer available." }, 409);
     let subtotal = 0;
     for (const p of products) {
       const quantity = merged.get(p.id)!;
-      if (!p.is_active || p.stock_quantity < quantity) return reply({ error: p.name + " is out of stock or unavailable." }, 409);
+      if (!p.is_active || p.is_sold_out || p.stock_quantity < quantity) return reply({ error: p.name + " is sold out or unavailable." }, 409);
       subtotal += p.price_inr * quantity;
     }
     if (subtotal < 500) return reply({ error: "Minimum product subtotal is ₹500 (shipping is free)." }, 400);
