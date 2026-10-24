@@ -205,39 +205,42 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 @media(max-width:420px){.wishlist-row{grid-template-columns:48px 1fr}.wishlist-row img{width:48px;height:48px}.wishlist-row button{grid-column:2}}
 
 
-/* Refined main navigation and mobile menu */
-.nav{gap:clamp(10px,2vw,28px);isolation:isolate}
-.navlinks{align-items:center;flex:1;justify-content:center;min-width:0;gap:clamp(12px,2.3vw,32px);white-space:nowrap}
-.navlinks a{position:relative;display:inline-flex;align-items:center;min-height:40px;padding:4px 0;transition:color .2s ease}
+/* Navigation: one polished row on desktop, one horizontal link strip on mobile */
+.nav{gap:clamp(12px,2vw,28px);isolation:isolate;flex-wrap:nowrap}
+.brand{flex:0 0 auto;white-space:nowrap}
+.navlinks{display:flex;flex:1 1 auto;align-items:center;justify-content:center;min-width:0;gap:clamp(13px,2vw,29px);white-space:nowrap;flex-wrap:nowrap}
+.navlinks a{display:inline-flex;flex:0 0 auto;align-items:center;min-height:40px;padding:4px 0;white-space:nowrap;position:relative;transition:color .2s ease}
 .navlinks a:after{content:"";position:absolute;left:0;right:100%;bottom:1px;height:1px;background:#c5a578;transition:right .2s ease}
 .navlinks a:hover:after,.navlinks a:focus-visible:after{right:0}
-.menu-toggle{display:none;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid #64503b;color:#e6d6bc;border-radius:2px;padding:9px 11px;font:500 11px 'DM Sans',sans-serif;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
-.menu-icon{font-size:15px;line-height:1}
+.account-nav{display:flex;align-items:center;gap:2px;flex:0 0 auto;white-space:nowrap}
 .collections-intro{grid-column:1/-1;text-align:center;display:grid;gap:5px;margin:0 0 8px}
 .collections-intro span{font:500 10px 'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase;color:#c5a578}
 .collections-intro strong{font:500 clamp(21px,3vw,29px) 'Cormorant Garamond',serif;letter-spacing:3px;text-transform:uppercase;color:#f0dfc4}
 .collections-intro small{font:12px 'DM Sans',sans-serif;letter-spacing:.3px;color:#a99b89}
+@media(max-width:1020px) and (min-width:851px){
+ .nav{padding-left:3.5%;padding-right:3.5%;gap:12px}
+ .brand{font-size:22px;letter-spacing:4px}
+ .navlinks{gap:clamp(10px,1.4vw,17px)}
+ .navlinks a{font-size:13px}
+ .account-nav .navbtn{padding:8px 7px;font-size:10px}
+}
 @media(max-width:850px){
- .nav{height:62px;padding:0 4%;gap:10px;justify-content:space-between}
- .brand{font-size:clamp(18px,3vw,22px);letter-spacing:clamp(2px,.6vw,4px);white-space:nowrap}
- .menu-toggle{display:inline-flex;flex-shrink:0}
- .navlinks{display:none;position:absolute;top:calc(100% + 1px);left:10px;right:10px;flex:none;min-width:0;gap:0;align-items:stretch;justify-content:flex-start;flex-direction:column;white-space:normal;padding:7px;background:rgba(8,7,6,.98);border:1px solid #4e3d2c;box-shadow:0 18px 36px #000b;z-index:100}
- .navlinks.open{display:flex}
- .navlinks.open a,.navlinks a:nth-child(2),.navlinks a:nth-child(3){display:flex!important}
- .navlinks a{min-height:44px;padding:11px 13px;border-bottom:1px solid #ffffff10;font:500 13px 'Cormorant Garamond',serif;letter-spacing:.6px}
- .navlinks a:last-child{border-bottom:0}
+ .nav{height:auto;min-height:58px;padding:0 4%;gap:0 12px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center}
+ .brand{order:1;font-size:clamp(18px,3vw,22px);letter-spacing:clamp(2px,.6vw,4px)}
+ .account-nav{order:2;margin-left:auto;padding:4px 0;gap:2px}
+ .account-nav .navbtn{padding:7px 8px;font-size:10px;white-space:nowrap}
+ .navlinks{order:3;display:flex!important;position:static;flex:0 0 100%;width:100%;max-width:100%;min-width:0;justify-content:flex-start;align-items:center;gap:clamp(18px,4vw,30px);padding:7px 1px 10px;margin:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;flex-direction:row;flex-wrap:nowrap;background:transparent;border:0;border-top:1px solid #ffffff12;box-shadow:none;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .navlinks::-webkit-scrollbar{display:none}
+ .navlinks>a{display:inline-flex!important;flex:0 0 auto;min-height:30px;padding:4px 0 5px;border:0;font:500 12px 'Cormorant Garamond',serif;letter-spacing:.45px;white-space:nowrap}
  .navlinks a:after{display:none}
- .account-nav{display:flex;gap:2px;flex-shrink:0;align-items:center}
- .account-nav .navbtn{padding:8px 7px;font-size:10px;white-space:nowrap}
- .category-showcase{scroll-margin-top:76px}
- #shop,#story,#help{scroll-margin-top:76px}
+ .category-showcase,#shop,#story,#help{scroll-margin-top:112px}
 }
 @media(max-width:420px){
- .nav{padding:0 10px;gap:7px}
+ .nav{padding:0 10px}
  .brand{font-size:17px;letter-spacing:2px}
- .menu-toggle{padding:8px 7px;gap:4px;font-size:9px;letter-spacing:.6px}
- .menu-icon{font-size:13px}
  .account-nav .navbtn{padding:7px 6px;font-size:9px}
+ .navlinks{gap:21px;padding:7px 1px 9px}
+ .navlinks>a{font-size:12px}
  .collections-intro{margin-bottom:2px}
  .collections-intro strong{font-size:21px;letter-spacing:2px}
  .collections-intro small{font-size:11px}
@@ -248,7 +251,7 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 </head>
 <body>
 <div class="topline">Dark details. Distinct identity. · Free shipping across India</div>
-<header class="nav"><a class="brand" href="#" aria-label="Velora Jewells home">VELORA <span>JEWELLS</span></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation menu" aria-controls="mainNavigation" aria-expanded="false"><span class="menu-icon" aria-hidden="true">☰</span><span class="menu-label">Menu</span></button><nav class="navlinks" id="mainNavigation" aria-label="Main navigation"><a href="#shop" data-nav-shop>Shop All</a><a href="#collections">Collections</a><a href="#shop" data-nav-arrivals>New Arrivals</a><a href="#story">Our Story</a><a href="#help">Contact</a></nav><div class="account-nav"><a class="navbtn" id="accountBtn" href="#accountModal" style="text-decoration:none">Sign in</a><button class="navbtn" id="openCart">Bag <span id="navCount">0</span></button></div></header>
+<header class="nav"><a class="brand" href="#" aria-label="Velora Jewells home">VELORA <span>JEWELLS</span></a><nav class="navlinks" id="mainNavigation" aria-label="Main navigation"><a href="#shop" data-nav-shop>Shop All</a><a href="#collections">Collections</a><a href="#shop" data-nav-arrivals>New Arrivals</a><a href="#help">Contact</a></nav><div class="account-nav"><a class="navbtn" id="accountBtn" href="#accountModal" style="text-decoration:none">Sign in</a><button class="navbtn" id="openCart">Bag <span id="navCount">0</span></button></div></header>
 <main>
 <section class="hero"><div><div class="eyebrow">Jewellery beyond ordinary</div><h1>Wear your<br><em>darker side.</em></h1><p>Gothic details, timeless symbols and statement pieces made for the ones who never blend in.</p><div class="actions"><a class="btn" href="#shop">Explore collection</a><a class="btn secondary" href="#story">Discover Velora</a></div></div><div class="hero-art" aria-label="Velora gothic jewellery aesthetic"><svg class="pendant-art" viewBox="0 0 300 360" role="img" aria-label="Velora gothic pendant illustration" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0d9e6"/><stop offset=".28" stop-color="#b77b9b"/><stop offset=".52" stop-color="#f4d8e7"/><stop offset=".78" stop-color="#81516e"/><stop offset="1" stop-color="#e6bfd3"/></linearGradient><radialGradient id="stone"><stop offset="0" stop-color="#4e2c4c"/><stop offset=".75" stop-color="#1c101e"/><stop offset="1" stop-color="#08070a"/></radialGradient></defs>
@@ -286,7 +289,7 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 <section class="section story" id="story"><div class="storybox"><strong>NOT MADE<br>TO BLEND IN.</strong></div><div><div class="eyebrow">The Velora point of view</div><h2>Small details.<br>Stronger identity.</h2><p>Velora Jewells is for expressive styling — from symbolic pendants to everyday chains and dark romantic accents. Choose a piece that feels like you.</p><p class="muted">Every product's price, stock and availability should be confirmed on its live product listing. We never mark an order paid until a payment provider confirms it.</p><a class="link" href="#shop">Explore the collection ↗</a></div></section>
 <section class="section" id="help"><div class="eyebrow">Need a hand?</div><h2>We're here to help.</h2><p class="muted">For product, shipping or order questions, contact the Velora Jewells team through your official store contact channel.</p><p class="muted">Order processing and online payments will be enabled after the store's payment and order-confirmation setup is completed.</p></section>
 </main>
-<footer class="footer"><div><div class="brand">VELORA <span>JEWELLS</span></div><p>Dark elegance, made personal.</p><span>© <span id="year"></span> Velora Jewells</span></div><div class="footlinks" aria-label="Footer navigation"><a href="#shop" data-nav-shop>Shop All</a><a href="#collections">Collections</a><a href="#shop" data-nav-arrivals>New Arrivals</a><a href="#story">Our Story</a><a href="#help">Contact</a><a href="policies.html#shipping">Shipping</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a><a href="policies.html#terms">Terms</a><a href="policies.html#faq">FAQ</a><a href="admin.html">Admin</a></div></footer>
+<footer class="footer"><div><div class="brand">VELORA <span>JEWELLS</span></div><p>Dark elegance, made personal.</p><span>© <span id="year"></span> Velora Jewells</span></div><div class="footlinks" aria-label="Footer navigation"><a href="#shop" data-nav-shop>Shop All</a><a href="#collections">Collections</a><a href="#shop" data-nav-arrivals>New Arrivals</a><a href="#help">Contact</a><a href="policies.html#shipping">Shipping</a><a href="policies.html#returns">Returns</a><a href="policies.html#privacy">Privacy</a><a href="policies.html#terms">Terms</a><a href="policies.html#faq">FAQ</a><a href="admin.html">Admin</a></div></footer>
 <button class="cart-fab" id="cartFab">Bag · <span id="fabCount">0</span></button>
 <div class="overlay" id="cartOverlay"><aside class="drawer"><div class="drawerhead"><h2>Your bag</h2><button class="x" id="closeCart" aria-label="Close cart">×</button></div><div id="cartItems"></div><div class="totalrow"><span>Product subtotal</span><strong id="subtotal">₹0</strong></div><div class="totalrow"><span>Shipping</span><strong>Free</strong></div><div class="totalrow grand"><span>Total</span><strong id="total">₹0</strong></div><p class="cartnote">Minimum product subtotal is ₹500 (shipping excluded). Payments are processed through Razorpay. An order is confirmed only after server-side payment verification. If checkout reports that payment setup is unavailable, the store payment credentials must be configured before live orders can be accepted.</p><button class="btn" style="width:100%" id="checkoutBtn">Proceed to secure checkout</button>
 <form class="checkout-form" id="checkoutForm">
@@ -361,23 +364,32 @@ function renderProducts(){const source=activeProductView==='new'?allProducts.sli
 async function loadProducts(){if(!db){allProducts=[];renderProducts();return}try{const {data,error}=await db.from('products').select('id,name,description,category,price_inr,compare_at_price_inr,image_url,stock_quantity,is_featured,is_sold_out,created_at').eq('is_active',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false});if(error)throw error;allProducts=data||[];renderProducts();renderCart()}catch(e){console.error(e);allProducts=[];renderProducts();document.getElementById('productCount').textContent='Catalog unavailable';toast('Could not load products. Check Supabase configuration.')}}
 
 const mainNav=document.getElementById('mainNavigation');
-const menuToggle=document.getElementById('menuToggle');
-function closeMainMenu(){mainNav.classList.remove('open');menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Open navigation menu');menuToggle.querySelector('.menu-icon').textContent='☰';menuToggle.querySelector('.menu-label').textContent='Menu'}
-function openMainMenu(){mainNav.classList.add('open');menuToggle.setAttribute('aria-expanded','true');menuToggle.setAttribute('aria-label','Close navigation menu');menuToggle.querySelector('.menu-icon').textContent='×';menuToggle.querySelector('.menu-label').textContent='Close'}
-menuToggle.addEventListener('click',()=>mainNav.classList.contains('open')?closeMainMenu():openMainMenu());
 mainNav.addEventListener('click',e=>{
  const link=e.target.closest('a');if(!link)return;
- if(link.hasAttribute('data-nav-arrivals')){e.preventDefault();activeProductView='new';activeCategory='All';document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));renderProducts();document.getElementById('shop').scrollIntoView({behavior:'smooth',block:'start'});}
- else if(link.hasAttribute('data-nav-shop')){activeProductView='all';activeCategory='All';document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));renderProducts();}
- closeMainMenu();
+ if(link.hasAttribute('data-nav-arrivals')){
+  e.preventDefault();
+  activeProductView='new';activeCategory='All';
+  document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));
+  renderProducts();document.getElementById('shop').scrollIntoView({behavior:'smooth',block:'start'});
+ }else if(link.hasAttribute('data-nav-shop')){
+  activeProductView='all';activeCategory='All';
+  document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));
+  renderProducts();
+ }
 });
 document.querySelector('.footlinks').addEventListener('click',e=>{
  const link=e.target.closest('a');if(!link)return;
- if(link.hasAttribute('data-nav-arrivals')){e.preventDefault();activeProductView='new';activeCategory='All';document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));renderProducts();document.getElementById('shop').scrollIntoView({behavior:'smooth',block:'start'});}
- else if(link.hasAttribute('data-nav-shop')){activeProductView='all';activeCategory='All';document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));renderProducts();}
+ if(link.hasAttribute('data-nav-arrivals')){
+  e.preventDefault();
+  activeProductView='new';activeCategory='All';
+  document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));
+  renderProducts();document.getElementById('shop').scrollIntoView({behavior:'smooth',block:'start'});
+ }else if(link.hasAttribute('data-nav-shop')){
+  activeProductView='all';activeCategory='All';
+  document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'));
+  renderProducts();
+ }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMainMenu()});
-document.addEventListener('click',e=>{if(!e.target.closest('.nav'))closeMainMenu()});
 
 function saveCart(){localStorage.setItem('velora_cart',JSON.stringify(cart));renderCart()}
 function cartProducts(){return Object.entries(cart).map(([id,q])=>({product:allProducts.find(p=>p.id===id),quantity:q})).filter(x=>x.product)}
