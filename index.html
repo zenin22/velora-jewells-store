@@ -161,6 +161,16 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 .footer{background:#030303;border-color:#49392b}
 @media(max-width:850px){.hero{min-height:430px;padding:55px 7%;background-position:center;background-size:cover}.hero-art{right:2%;width:45%;height:68%;top:16%;opacity:.45}.hero>div:first-child{max-width:65%;}.hero h1{font-size:52px}.nav{padding:0 4%}}
 @media(max-width:520px){.hero{min-height:410px;padding:46px 6%;background-position:58% center}.hero-art{right:-8%;width:65%;height:62%;top:22%;opacity:.3}.hero>div:first-child{max-width:85%}.hero h1{font-size:46px}.hero p{max-width:260px}.navlinks{gap:12px}.navlinks a:nth-child(2),.navlinks a:nth-child(3){display:none}}
+
+/* Floating contact concierge */
+.contact-float{position:fixed;right:20px;bottom:22px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font-family:Arial,sans-serif}
+.contact-float a{display:flex;align-items:center;gap:10px;min-height:45px;padding:0 16px;border:1px solid #9e8055;border-radius:999px;background:linear-gradient(135deg,#17100d,#050505);color:#f0dfc4;text-decoration:none;box-shadow:0 8px 28px #000b,0 0 18px #c5a5781a;font-size:12px;letter-spacing:.4px;transition:transform .25s,box-shadow .25s,border-color .25s;animation:veloraPulse 3.2s ease-in-out infinite}
+.contact-float a:hover{transform:translateY(-3px) scale(1.025);border-color:#e0bd84;box-shadow:0 12px 32px #000d,0 0 24px #c5a57835}
+.contact-float .wa{border-color:#7b7652}.contact-float .wa .contact-icon{background:#4e6241}
+.contact-float .contact-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:#59432e;color:#fff1d7;font-size:16px;flex:0 0 auto}
+.contact-float small{display:block;font-size:9px;letter-spacing:1.3px;color:#bfa77f;margin-bottom:2px}
+@keyframes veloraPulse{0%,100%{box-shadow:0 8px 28px #000b,0 0 0 0 #c5a57800}50%{box-shadow:0 8px 28px #000b,0 0 0 5px #c5a57813}}
+@media(max-width:520px){.contact-float{right:12px;bottom:14px;gap:8px}.contact-float a{min-height:42px;padding:0 12px;font-size:11px}.contact-float .contact-icon{width:25px;height:25px}}
 </style>
 </head>
 <body>
@@ -275,4 +285,14 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
 });
 document.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
+
+<div class="contact-float" aria-label="Contact Velora Jewells">
+ <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
+  <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
+ </a>
+ <a href="mailto:velora1906@gmail.com?subject=Velora%20Jewells%20Enquiry" aria-label="Email Velora Jewells">
+  <span class="contact-icon" aria-hidden="true">✉</span><span><small>NEED HELP?</small>Email us</span>
+ </a>
+</div>
+
 </body></html>
