@@ -124,6 +124,43 @@ body{background:#030303;color:#f1e7d8;font-family:'Cormorant Garamond',Georgia,s
 .drawer{font-family:'DM Sans',sans-serif}
 @media(max-width:850px){.nav{padding:0 4%;height:58px}.navlinks{gap:12px}.navlinks a:nth-child(2),.navlinks a:nth-child(3){display:none}.hero{grid-template-columns:1fr;padding:48px 7%;min-height:420px;background-position:center;background-size:cover}.hero-art{display:none}.hero h1{font-size:56px}.section{padding:25px 5%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.product-img{height:190px}.story{grid-template-columns:1fr}.storybox{min-height:190px}}
 @media(max-width:420px){.brand{font-size:20px;letter-spacing:4px}.navbtn{font-size:12px}.hero{min-height:390px;padding:45px 6%}.hero h1{font-size:48px}.hero p{font-size:13px}.grid{gap:9px}.product-img{height:145px}.product-info{padding:9px 6px}.product-info h3{font-size:14px}#filters{gap:11px}.filter{font-size:12px}}
+
+/* Raven queen hero — cinematic gothic atmosphere */
+:root{--bg:#030303;--panel:#080707;--panel2:#100b0b;--line:#514132;--text:#f1e7da;--muted:#c1b3a4;--pink:#c6a578;--pink2:#8b1d2b;--gold:#c6a578}
+body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,serif}
+.nav{height:58px;padding:0 6%;background:#050505f5;border-bottom:1px solid #49392b}
+.brand{font-size:25px;letter-spacing:7px;color:#d8c29e}.brand span{color:#d8c29e}
+.navlinks{font:500 14px 'Cormorant Garamond',serif;letter-spacing:.5px;text-transform:none;color:#e5d8c7}
+.navbtn{border:0;color:#d6c4a8;background:transparent}
+.hero{min-height:370px;padding:48px 13%;grid-template-columns:1fr;position:relative;isolation:isolate;overflow:hidden;background:#030303 url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=2200&q=90') center 46%/cover}
+.hero:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#030303 0%,#030303dc 25%,#03030366 55%,#03030318 100%),linear-gradient(0deg,#030303 0%,transparent 24%,#03030322 100%)}
+.hero:after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 69% 42%,#7a4d3833,transparent 35%)}
+.hero>div:first-child{max-width:510px;z-index:1}
+.hero .eyebrow{color:#d7bd96;letter-spacing:3.5px;font-size:10px}
+.hero h1{font:500 clamp(44px,5vw,70px)/.92 'Cormorant Garamond',serif;letter-spacing:2px;text-transform:uppercase;color:#f5e9d9;text-shadow:0 5px 25px #000;margin:18px 0}
+.hero h1 em{font-style:normal;color:#e4d0b2}
+.hero p{font:14px/1.7 'Cormorant Garamond',serif;color:#e0d0be;max-width:330px}
+.btn{background:transparent;color:#ead8bb;border:1px solid #bda075;box-shadow:0 4px 22px #0008;font:600 9px 'DM Sans',sans-serif;letter-spacing:1.5px;padding:12px 20px}
+.btn:hover{background:#c6a578;color:#090706;transform:translateY(-2px)}
+.hero-art{position:absolute;right:12%;top:7%;width:39%;height:86%;border:0;background:linear-gradient(90deg,transparent,#03030312),url('https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=1000&q=90') center/contain no-repeat;box-shadow:none;filter:drop-shadow(0 18px 24px #000b);opacity:.95;transform:perspective(1000px) rotateY(-4deg);transition:transform .5s}
+.hero-art:hover{transform:perspective(1000px) rotateY(0) translateY(-4px)}
+.hero-art:before,.hero-art:after,.hero-art .pendant-art{display:none}
+.art-caption{bottom:20px;right:0;left:auto;background:#050403c9;color:#e0c7a1;font:12px 'Cormorant Garamond',serif;letter-spacing:1px;backdrop-filter:blur(8px)}
+.ticker{display:none}
+.section{background:#030303}
+.category-showcase{background:#030303}
+#shop h2{font:500 20px 'Cormorant Garamond',serif;letter-spacing:5px;text-transform:uppercase;color:#e8d6bd}
+.product{background:#050505;border-color:#403328;box-shadow:0 10px 30px #0008}
+.product:hover{border-color:#b99a6b;box-shadow:0 16px 36px #000}
+.product-img img{filter:brightness(.8) saturate(.72) contrast(1.1)}
+.product-info{background:#050505}
+.product-info h3{font:500 15px 'Cormorant Garamond',serif;color:#eee0ce}
+.price{color:#d4bd96}
+.add{border-color:#80694d;color:#e3d0b2;background:transparent}
+.story{background:#090605;border-color:#49392b}
+.footer{background:#030303;border-color:#49392b}
+@media(max-width:850px){.hero{min-height:430px;padding:55px 7%;background-position:center;background-size:cover}.hero-art{right:2%;width:45%;height:68%;top:16%;opacity:.45}.hero>div:first-child{max-width:65%;}.hero h1{font-size:52px}.nav{padding:0 4%}}
+@media(max-width:520px){.hero{min-height:410px;padding:46px 6%;background-position:58% center}.hero-art{right:-8%;width:65%;height:62%;top:22%;opacity:.3}.hero>div:first-child{max-width:85%}.hero h1{font-size:46px}.hero p{max-width:260px}.navlinks{gap:12px}.navlinks a:nth-child(2),.navlinks a:nth-child(3){display:none}}
 </style>
 </head>
 <body>
