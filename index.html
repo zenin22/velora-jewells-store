@@ -327,6 +327,7 @@ async function renderAccountProfile(user){
  document.getElementById('profileArea').style.display='block';
  document.getElementById('accountMessage').textContent='';
  document.getElementById('profileEmail').value=user.email||'';
+ await db.from('profiles').upsert({id:user.id,display_name:name,email:user.email||null},{onConflict:'id'});
  const {data:profile}=await db.from('profiles').select('display_name,email,phone,shipping_address').eq('id',user.id).maybeSingle();
  document.getElementById('profileName').value=profile?.display_name||name;
  document.getElementById('profilePhone').value=profile?.phone||'';
