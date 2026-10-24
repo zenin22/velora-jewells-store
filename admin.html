@@ -1,235 +1,258 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a080b"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="favicon.svg" type="image/svg+xml"><title>Velora Jewells — Admin</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
-:root{--bg:#0a080b;--panel:#151017;--line:#392a3b;--text:#f8eff5;--muted:#b8a9b8;--pink:#d98aaa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.wrap{max-width:1100px;margin:auto;padding:28px 20px}.top{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:22px}.brand{font:600 27px 'Cormorant Garamond',serif;letter-spacing:4px}.brand span{color:var(--pink)}a{color:var(--pink)}.muted{color:var(--muted);font-size:13px;line-height:1.7}.panel{border:1px solid var(--line);background:var(--panel);padding:24px;margin:24px 0}.hidden{display:none!important}h1,h2{font:500 34px 'Cormorant Garamond',serif;margin:0 0 12px}label{display:block;color:var(--muted);font-size:12px;margin:12px 0 6px}input,textarea,select{width:100%;background:#0c090e;border:1px solid #453347;color:white;padding:12px;border-radius:0}textarea{min-height:80px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.btn{background:var(--pink);color:#190c13;border:1px solid var(--pink);padding:12px 17px;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase}.btn.secondary{background:transparent;color:white;border-color:var(--line)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.msg{padding:12px;background:#211621;border:1px solid var(--line);margin:12px 0;font-size:13px;line-height:1.6}.bad{border-color:#8e455c;color:#ffd8e4}.good{border-color:#426b50;color:#c8f1d1}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{padding:16px;border:1px solid var(--line)}.stat strong{display:block;font:30px 'Cormorant Garamond',serif}.productrow{border-top:1px solid var(--line);padding:16px 0;display:grid;grid-template-columns:1fr auto;gap:12px}.pill{font-size:10px;color:var(--pink);letter-spacing:1px;text-transform:uppercase}
-.uploadbox{border:1px solid var(--line);padding:14px;margin:16px 0;background:#100c12}.uploadbox input[type=file]{padding:9px;border-style:dashed}.previewrow{display:flex;align-items:center;gap:14px;min-height:64px;margin:10px 0}.image-preview{width:84px;height:84px;object-fit:cover;border:1px solid #72566c}.hidden{display:none!important}.finance-stats{grid-template-columns:repeat(4,minmax(0,1fr))}.stockbadge{display:inline-block;padding:4px 8px;border:1px solid #b45d72;color:#ffd6df;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-top:7px}.profit-positive{color:#bdebc8}.profit-negative{color:#ffc4d6}.order-items{width:100%;min-width:540px;border-collapse:collapse;margin:12px 0}.order-items th,.order-items td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:11px}.order-items th{color:#e7c0d2}@media(max-width:600px){.finance-stats{grid-template-columns:1fr 1fr}}.tablewrap{overflow:auto;border:1px solid var(--line);margin-top:14px}table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}th{color:#e7c0d2;text-transform:uppercase;letter-spacing:1px;font-size:10px;background:#100c12}td{color:#e4d9e3;line-height:1.6}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}.toolbar input{max-width:340px}.pill.goodpill{color:#bdebc8}.pill.warnpill{color:#ffe0a8}
-@media(max-width:600px){.grid,.stats{grid-template-columns:1fr}.top{align-items:start;flex-direction:column}.panel{padding:17px}.toolbar input{max-width:none}}
-</style></head><body><div class="wrap"><header class="top"><div><a class="brand" href="index.html" style="text-decoration:none;color:var(--text)">VELORA <span>JEWELLS</span></a><div class="muted">Store administration</div></div><a href="index.html">← View storefront</a></header>
-<div id="status" class="msg">Connecting to the store database…</div>
-<section id="loginPanel" class="panel"><h1>Admin sign in</h1><p class="muted">Sign in with an account that has the server-managed <code>app_metadata.role = admin</code> claim. A normal account cannot grant itself admin access. Password and Google login both require configuration in Supabase Auth.</p><form id="loginForm"><label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required><div class="actions"><button class="btn" type="submit">Sign in securely</button><button class="btn secondary" type="button" id="googleBtn">Continue with Google</button></div><button class="btn secondary" type="button" id="clearSessionBtn" style="margin-top:12px">Sign out current session</button></form></section>
-<section id="appPanel" class="hidden"><div class="stats"><div class="stat"><span class="muted">Products</span><strong id="statProducts">0</strong></div><div class="stat"><span class="muted">Units in stock</span><strong id="statStock">0</strong></div><div class="stat"><span class="muted">Low / out of stock</span><strong id="statLow">0</strong></div><div class="stat"><span class="muted">Paid orders</span><strong id="statOrders">0</strong></div><div class="stat"><span class="muted">Gross sales</span><strong id="statRevenue">₹0</strong></div><div class="stat"><span class="muted">My Profits</span><strong id="statMyProfits">—</strong><span class="tiny muted" id="statMyProfitsNote">Shows after a sale</span></div><div class="stat"><span class="muted">Pending orders</span><strong id="statPending">0</strong></div><div class="stat"><span class="muted">Confirmed orders</span><strong id="statConfirmed">0</strong></div><div class="stat"><span class="muted">Delivered orders</span><strong id="statDelivered">0</strong></div><div class="stat"><span class="muted">Packed / shipped</span><strong id="statInTransit">0</strong></div><div class="stat"><span class="muted">Customer profiles</span><strong id="statCustomers">0</strong></div><div class="stat"><span class="muted">Wishlist saves</span><strong id="statWishlist">0</strong></div><div class="stat"><span class="muted">Recent store events</span><strong id="statCartEvents">0</strong></div></div>
-<div class="panel"><h2 id="formTitle">Add a product</h2><p class="muted">Upload a product photo directly from your device. Images are stored in the product image bucket; an image URL is optional fallback.</p><form id="productForm"><input type="hidden" id="productId"><div class="grid"><div><label for="name">Product name</label><input id="name" required maxlength="120"></div><div><label for="category">Category</label><select id="category"><option>Pendants</option><option>Chains</option><option>Bracelets</option><option>Rings</option><option>Earrings</option><option>Other</option></select></div><div><label for="price">Selling price (₹)</label><input id="price" type="number" min="0" step="1" required></div><div><label for="compare">Original MRP (₹)</label><input id="compare" type="number" min="1" step="1" required placeholder="Must be above selling price"></div><div><label for="costPrice">Private purchase cost (₹) — admin only</label><input id="costPrice" type="number" min="0" step="1" required placeholder="Your cost per item"><small class="muted">Private business data: saved separately and never displayed to buyers. Used for profit calculations.</small></div><div><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0" required></div></div><div class="uploadbox"><label for="imageFile">Product image upload (JPG, PNG, WebP · max 5 MB)</label><input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp"><div class="previewrow"><img id="imagePreview" alt="Product image preview" class="image-preview hidden"><span id="imagePreviewNote" class="muted">No image selected yet.</span></div><label for="image">Image URL (optional fallback)</label><input id="image" type="url" placeholder="https://…"></div><label for="description">Description</label><textarea id="description" maxlength="1200"></textarea><div class="grid"><label><input id="active" type="checkbox" style="width:auto"> Publish on storefront</label><label><input id="featured" type="checkbox" style="width:auto"> Feature this product</label><label><input id="soldOut" type="checkbox" style="width:auto"> Mark as SOLD OUT</label></div><div class="actions"><button class="btn" type="submit">Save product</button><button class="btn secondary" type="button" id="resetBtn">Clear form</button></div></form></div>
-<div class="panel"><h2>Product costs & sales margins</h2><p class="muted">Purchase costs are private. Your total My Profits above updates automatically when an order is created, excludes cancelled/returned/refunded orders, and subtracts recorded order expenses. Products that have not sold show no margin yet; sold-product margin uses the cost snapshot saved with the order.</p><div id="financeProducts" style="margin-top:18px"></div></div>
-<div class="panel"><h2>Product inventory</h2><div id="inventory"></div></div><div class="panel"><h2>Orders & fulfilment</h2><p class="muted">Only verified paid orders appear here. Update order status and add courier tracking after dispatch.</p><div id="orders"><p class="muted">Loading orders…</p></div></div>
-<div class="panel"><h2>Customer accounts</h2><p class="muted">Profile information customers have saved, linked order counts and wishlist totals. Passwords and private sign-in credentials are never shown here.</p><div class="toolbar"><input id="customerSearch" placeholder="Search name, email or phone" type="search" aria-label="Search customers"><button class="btn secondary" id="exportCustomers">Export customer CSV</button></div><div id="customers"><p class="muted">Loading customer profiles…</p></div></div>
-<div class="panel"><h2>Saved wishlists</h2><p class="muted">See which products customers save. This panel is read-only to protect customer account data.</p><div class="toolbar"><input id="wishlistSearch" placeholder="Search customer or product" type="search" aria-label="Search wishlists"></div><div id="wishlists"><p class="muted">Loading wishlist data…</p></div></div>
-<div class="panel"><h2>Store activity</h2><p class="muted">Recent product views, add-to-cart actions, cart removals and checkout starts recorded by the storefront.</p><div class="toolbar"><select id="activityFilter" aria-label="Filter activity"><option value="">All activity</option><option value="view">Product views</option><option value="add_to_cart">Added to cart</option><option value="remove_from_cart">Removed from cart</option><option value="checkout_started">Checkout started</option></select><button class="btn secondary" id="exportActivity">Export activity CSV</button></div><div id="activity"><p class="muted">Loading activity…</p></div></div>
-<div class="panel"><h2>Order & payment audit trail</h2><p class="muted">Recent status changes and payment-provider event types, so important order changes are visible in one place.</p><div id="auditTrail"><p class="muted">Loading audit trail…</p></div></div>
-<div class="actions"><button class="btn secondary" id="logoutBtn">Sign out</button></div></section>
-</div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script><script>
-const SUPABASE_URL='https://arypnpohredubfaymuwm.supabase.co';const SUPABASE_PUBLISHABLE_KEY='sb_publishable_aJZyDdFiMkOuhmIxEKIuuA_QALzapmi';const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);let products=[],orders=[],customers=[],wishlists=[],activityEvents=[],statusHistory=[],paymentEvents=[],productCosts=new Map();
-function status(text,kind=''){ $('status').textContent=text;$('status').className='msg '+kind}
-function admin(user){return user?.app_metadata?.role==='admin'}
-function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function reset(){ $('productForm').reset();$('productId').value='';$('formTitle').textContent='Add a product';$('stock').value='0';$('imagePreview').src='';$('imagePreview').classList.add('hidden');$('imagePreviewNote').textContent='No image selected yet.'}
-function showImagePreview(src,note='Image preview'){if(src){$('imagePreview').src=src;$('imagePreview').classList.remove('hidden');$('imagePreviewNote').textContent=note}else{$('imagePreview').removeAttribute('src');$('imagePreview').classList.add('hidden');$('imagePreviewNote').textContent='No image selected yet.'}}
-function fill(p){$('productId').value=p.id;$('name').value=p.name;$('category').value=p.category;$('price').value=p.price_inr;$('compare').value=p.compare_at_price_inr??'';$('costPrice').value=productCosts.has(p.id)?productCosts.get(p.id):'';$('stock').value=p.stock_quantity;$('image').value=p.image_url||'';$('imageFile').value='';showImagePreview(p.image_url||'',p.image_url?'Saved product image':'No saved image');$('description').value=p.description||'';$('active').checked=p.is_active;$('featured').checked=p.is_featured;$('soldOut').checked=Boolean(p.is_sold_out);$('formTitle').textContent='Edit product'}
-function render(){
- $('statProducts').textContent=products.length;
- $('statStock').textContent=products.reduce((n,p)=>n+Number(p.stock_quantity||0),0);
- $('statLow').textContent=products.filter(p=>Number(p.stock_quantity||0)<=3||p.is_sold_out).length;
- $('statOrders').textContent=orders.length;
- const activeOrders=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&!['refunded','failed'].includes(o.payment_status));
- $('statRevenue').textContent='₹'+activeOrders.reduce((n,o)=>n+Number(o.subtotal_inr||0),0).toLocaleString('en-IN');
- $('statPending').textContent=orders.filter(o=>o.order_status==='pending').length;
- $('statConfirmed').textContent=orders.filter(o=>o.order_status==='confirmed').length;
- $('statDelivered').textContent=orders.filter(o=>o.order_status==='delivered').length;
- $('statInTransit').textContent=orders.filter(o=>['packed','shipped'].includes(o.order_status)).length;
- $('statCustomers').textContent=customers.length;$('statWishlist').textContent=wishlists.length;$('statCartEvents').textContent=activityEvents.length;
- $('inventory').innerHTML=products.length?products.map(p=>'<div class="productrow"><div>'+(p.image_url?'<img src="'+escapeHtml(p.image_url)+'" alt="" style="width:58px;height:58px;object-fit:cover;float:left;margin-right:12px;border:1px solid var(--line)" onerror="this.style.display=\'none\'">':'')+'<strong>'+escapeHtml(p.name)+'</strong><div class="muted">Selling ₹'+Number(p.price_inr).toLocaleString('en-IN')+' · Cost '+(productCosts.has(p.id)?'₹'+Number(productCosts.get(p.id)).toLocaleString('en-IN'):'Not set')+' · Stock '+p.stock_quantity+'</div><span class="pill '+(p.is_active?'goodpill':'warnpill')+'">'+(p.is_active?'Published':'Draft')+'</span>'+(p.is_sold_out||p.stock_quantity<=0?'<div class="stockbadge">Sold Out</div>':'')+'</div><div class="actions" style="margin:0"><button class="btn secondary" data-edit="'+p.id+'">Edit</button><button class="btn secondary" data-toggle="'+p.id+'">'+(p.is_active?'Unpublish':'Publish')+'</button></div></div>').join(''):'<p class="muted">No products yet. Add your first product above.</p>';
- renderFinance();
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0810">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<title>Velora Jewells — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0810;--panel:#14101a;--panel2:#1b1420;--line:#34283b;--text:#f8f1f7;--muted:#aa9bae;--pink:#e28db3;--pink2:#f5bad0;--gold:#d8bb87;--green:#bde8cd;--red:#ffb9cf;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% 0%,#241527 0,transparent 38%),radial-gradient(ellipse at 100% 8%,#271725 0,transparent 26%),var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}.shell{max-width:1440px;margin:auto;padding:26px clamp(16px,3.3vw,48px) 44px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 0 22px;border-bottom:1px solid #ffffff13}.brandrow{display:flex;align-items:center;gap:13px}.brandmark{width:42px;height:42px;border:1px solid #e28db366;background:linear-gradient(135deg,#37213a,#160e1c);display:grid;place-items:center;border-radius:14px;color:var(--pink);font:700 20px 'Playfair Display',serif;box-shadow:0 8px 30px #0005}.brand{font:600 22px 'Playfair Display',serif;letter-spacing:2.2px}.brand span{color:var(--pink)}.eyebrow{color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;margin-top:4px}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.top-link,.ghost-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#ffffff05;color:#e8dce9;font-size:12px;font-weight:600;transition:.2s}.top-link:hover,.ghost-btn:hover{border-color:#95647f;background:#ffffff0a}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#8bd3a4;box-shadow:0 0 14px #8bd3a477;margin-right:6px}.status{margin:14px 0 0;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:#100c15;color:var(--muted);font-size:12px;line-height:1.5}.status.good{color:var(--green);border-color:#426b50}.status.bad{color:var(--red);border-color:#8e455c}.hidden{display:none!important}
+.login-wrap{max-width:460px;margin:8vh auto}.login-card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#1a1320,#100c15);padding:clamp(23px,4vw,36px);box-shadow:0 28px 90px #0005}.login-symbol{width:50px;height:50px;display:grid;place-items:center;border:1px solid #e28db355;border-radius:16px;color:var(--pink);font-size:21px;margin-bottom:22px}.login-card h1{font:600 31px 'Playfair Display',serif;margin:0 0 10px}.login-card p{color:var(--muted);font-size:13px;line-height:1.7}.login-card label{display:block;font-size:11px;font-weight:700;color:#dbcddb;margin:16px 0 7px}.login-card input{width:100%;border:1px solid var(--line);border-radius:10px;padding:13px 14px;background:#0d0911;color:var(--text);outline:none}.login-card input:focus{border-color:var(--pink)}.btn{border:1px solid var(--pink);border-radius:10px;padding:13px 16px;background:var(--pink);color:#210f1a;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:800}.btn.secondary{border-color:var(--line);background:#ffffff04;color:var(--text)}.login-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:20px}.hint{font-size:11px!important;margin-top:18px!important}
+.hero{margin:28px 0 22px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,.7fr);gap:18px}.welcome,.clockcard{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;position:relative;background:linear-gradient(125deg,#201528,#14101a 70%);padding:clamp(22px,3.3vw,38px);min-height:190px}.welcome:after{content:"V";font:700 clamp(120px,20vw,240px) 'Playfair Display',serif;color:#e28db30a;position:absolute;right:20px;bottom:-66px;pointer-events:none}.section-kicker{color:var(--gold);font-size:10px;letter-spacing:2.3px;font-weight:700;text-transform:uppercase}.welcome h1{font:600 clamp(31px,4vw,48px) 'Playfair Display',serif;line-height:1.14;margin:14px 0 11px;position:relative;z-index:1}.welcome h1 span{color:var(--pink)}.welcome p{margin:0;max-width:520px;color:#bcaec1;line-height:1.75;font-size:13px;position:relative;z-index:1}.welcome-meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:26px}.tag{display:inline-flex;align-items:center;gap:7px;border:1px solid #ffffff15;background:#ffffff05;padding:8px 10px;border-radius:9px;font-size:10px;color:#d8cbdc}.clockcard{display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#1c1422,#110d16)}.clock-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px}.clock-time{font-size:clamp(32px,4vw,47px);font-weight:500;letter-spacing:-1.8px;font-variant-numeric:tabular-nums;margin:22px 0 5px}.clock-date{color:var(--pink2);font-size:12px}.clock-zone{color:#897a90;font-size:10px;margin-top:8px;letter-spacing:1px;text-transform:uppercase}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.metric{background:linear-gradient(145deg,#18121d,#110d15);border:1px solid var(--line);border-radius:15px;padding:18px 19px;min-height:126px;position:relative;overflow:hidden}.metric:before{content:"";width:62px;height:62px;border:1px solid #e28db31c;border-radius:50%;position:absolute;right:-17px;top:-17px}.metric-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}.metric-value{font:600 clamp(24px,2.7vw,34px) 'Playfair Display',serif;letter-spacing:-.6px;margin:14px 0 7px;font-variant-numeric:tabular-nums}.metric-note{color:#8e7f96;font-size:10px;line-height:1.5}.metric.featured{border-color:#87566f;background:linear-gradient(135deg,#392036,#1b1220)}.metric.featured .metric-value{color:var(--pink2)}.metric.gold .metric-value{color:var(--gold)}.metric.green .metric-value{color:var(--green)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:32px 0 15px}.section-head h2{font:600 24px 'Playfair Display',serif;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5}.navgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.navcard{display:block;border:1px solid var(--line);border-radius:15px;padding:20px;background:linear-gradient(145deg,#19131e,#110d15);min-height:160px;transition:transform .18s,border-color .18s,background .18s;position:relative;overflow:hidden}.navcard:hover{transform:translateY(-3px);border-color:#99617f;background:linear-gradient(145deg,#241728,#151019)}.nav-icon{width:39px;height:39px;border:1px solid #e28db344;border-radius:12px;display:grid;place-items:center;color:var(--pink);font-size:12px;font-weight:800;margin-bottom:19px;background:#e28db30a}.navcard h3{font-size:14px;margin:0 0 7px;font-weight:700}.navcard p{margin:0;color:var(--muted);font-size:11px;line-height:1.6;max-width:240px}.nav-arrow{position:absolute;right:18px;top:20px;font-size:15px;color:#8d7a92}.lower-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(270px,.8fr);gap:16px;margin-top:30px}.box{background:#130f18;border:1px solid var(--line);border-radius:16px;padding:21px;min-width:0}.box-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.box-head h3{font:600 19px 'Playfair Display',serif;margin:0}.text-link{color:var(--pink);font-size:11px;font-weight:700}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:490px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #ffffff0d;font-size:11px}th{color:#8f8197;text-transform:uppercase;letter-spacing:1px;font-size:9px;font-weight:700}td{color:#e6dce9;white-space:nowrap}.order-id{font-weight:700;color:#f6eaf4}.order-date{color:#897b90;font-size:10px;margin-top:4px}.badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:6px;border:1px solid #ffffff18;font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:#e3d5e6}.badge.delivered{color:var(--green);border-color:#537b5e55;background:#8bd4a20a}.badge.pending{color:var(--gold);border-color:#b59b6950}.badge.cancelled,.badge.returned{color:var(--red);border-color:#b85c7a55}.quick-list{display:grid;gap:10px}.quick-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #ffffff0d}.quick-row:last-child{border-bottom:0}.quick-mini{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--line);border-radius:10px;color:var(--gold);font-size:10px;font-weight:700;flex-shrink:0}.quick-copy{flex:1;min-width:0}.quick-copy strong{display:block;font-size:12px}.quick-copy span{font-size:10px;color:var(--muted);display:block;margin-top:4px;line-height:1.45}.quick-value{font-weight:700;font-size:12px;color:var(--pink2);white-space:nowrap}.empty{color:var(--muted);font-size:12px;line-height:1.7;padding:15px 0}.footer{border-top:1px solid #ffffff12;margin-top:35px;padding-top:18px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;color:#7f7186;font-size:10px}.footer strong{color:#c5b1c8;font-weight:600}
+@media(max-width:980px){.metric-grid,.navgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr 260px}.lower-grid{grid-template-columns:1fr}.clock-time{font-size:35px}}
+@media(max-width:620px){.shell{padding:15px 13px 30px}.topbar{align-items:flex-start}.brand{font-size:18px;letter-spacing:1.5px}.brandmark{width:36px;height:36px}.top-actions{justify-content:flex-end}.top-link{font-size:10px;padding:9px}.hero{grid-template-columns:1fr;margin-top:17px}.welcome{min-height:220px}.clockcard{min-height:150px}.clock-time{margin:12px 0 4px;font-size:36px}.metric-grid{gap:9px}.metric{padding:14px;min-height:115px}.metric-value{font-size:26px}.navgrid{gap:9px}.navcard{padding:15px;min-height:153px}.nav-icon{margin-bottom:14px}.navcard h3{font-size:12px}.navcard p{font-size:10px}.section-head{align-items:start;flex-direction:column;margin-top:26px}.box{padding:15px}.lower-grid{margin-top:23px}.footer{font-size:9px}}
+@media(min-width:621px) and (max-width:780px){.hero{grid-template-columns:1fr}.clockcard{min-height:155px}.metric-grid,.navgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+ <div class="brandrow"><div class="brandmark">V</div><div><div class="brand">VELORA <span>JEWELLS</span></div><div class="eyebrow">Private Admin Workspace</div></div></div>
+ <div class="top-actions"><span class="top-link"><i class="live-dot"></i> Secure workspace</span><a class="top-link" href="index.html">View storefront ↗</a><button class="ghost-btn hidden" id="logoutBtn" type="button">Sign out</button></div>
+</header>
+<div id="status" class="status" role="status" aria-live="polite">Connecting securely to your store…</div>
+
+<section id="loginPanel" class="login-wrap hidden">
+ <div class="login-card">
+  <div class="login-symbol">✦</div>
+  <div class="section-kicker">Admin access</div>
+  <h1>Welcome back.</h1>
+  <p>Sign in with your authorised store-admin account to view live sales, order status, inventory and private profit figures.</p>
+  <form id="loginForm">
+   <label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required>
+   <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+   <div class="login-actions"><button class="btn" type="submit">Enter dashboard →</button><button class="btn secondary" type="button" id="googleBtn">Continue with Google</button></div>
+  </form>
+  <p class="hint">Access is limited to accounts with the server-managed admin role. Signing in with an ordinary customer account will not grant access.</p>
+ </div>
+</section>
+
+<main id="dashboardApp" class="hidden">
+ <section class="hero">
+  <div class="welcome">
+   <div class="section-kicker"><span class="live-dot"></span> Your store at a glance</div>
+   <h1 id="greeting">Good day<span>.</span></h1>
+   <p>Everything important in one place. Track sales, check orders, manage your collection and see the margin from real sales.</p>
+   <div class="welcome-meta"><span class="tag" id="welcomeDate">Loading date…</span><span class="tag" id="adminEmail">Admin access verified</span></div>
+  </div>
+  <div class="clockcard">
+   <div class="clock-top"><span>LOCAL STORE TIME</span><span>INDIA</span></div>
+   <div><div class="clock-time" id="clock">--:--:--</div><div class="clock-date" id="clockDate">Loading…</div><div class="clock-zone">Asia / Kolkata · IST</div></div>
+   <div class="clock-top"><span><span class="live-dot"></span>Live clock</span><button class="ghost-btn" type="button" id="refreshBtn">↻ Refresh data</button></div>
+  </div>
+ </section>
+
+ <section aria-label="Sales metrics">
+  <div class="metric-grid">
+   <article class="metric featured"><div class="metric-label">My Profits</div><div class="metric-value" id="metricProfit">—</div><div class="metric-note" id="profitNote">Waiting for sales with saved cost data</div></article>
+   <article class="metric"><div class="metric-label">Total sales</div><div class="metric-value" id="metricSales">₹0</div><div class="metric-note">All valid orders in the store</div></article>
+   <article class="metric gold"><div class="metric-label">Today's sales</div><div class="metric-value" id="metricToday">₹0</div><div class="metric-note" id="todayNote">Orders recorded today</div></article>
+   <article class="metric"><div class="metric-label">This month's sales</div><div class="metric-value" id="metricMonth">₹0</div><div class="metric-note" id="monthNote">Current calendar month</div></article>
+   <article class="metric"><div class="metric-label">Total orders</div><div class="metric-value" id="metricOrders">0</div><div class="metric-note">All statuses included in order count</div></article>
+   <article class="metric gold"><div class="metric-label">Pending orders</div><div class="metric-value" id="metricPending">0</div><div class="metric-note">Need a status / fulfilment check</div></article>
+   <article class="metric green"><div class="metric-label">Delivered orders</div><div class="metric-value" id="metricDelivered">0</div><div class="metric-note">Marked delivered in the admin panel</div></article>
+   <article class="metric"><div class="metric-label">Products live</div><div class="metric-value" id="metricProducts">0</div><div class="metric-note" id="stockNote">0 units in stock</div></article>
+  </div>
+ </section>
+
+ <section>
+  <div class="section-head"><div><h2>Manage your store</h2><p>Choose a workspace to go straight to that part of the admin panel.</p></div></div>
+  <div class="navgrid">
+   <a class="navcard" href="manage.html#add-product"><span class="nav-arrow">↗</span><div class="nav-icon">01</div><h3>Products & pricing</h3><p>Add jewellery, upload photos, set prices and publish new items.</p></a>
+   <a class="navcard" href="manage.html#orders"><span class="nav-arrow">↗</span><div class="nav-icon">02</div><h3>Sales & orders</h3><p>Review orders, change fulfilment status, and add tracking details.</p></a>
+   <a class="navcard" href="manage.html#inventory"><span class="nav-arrow">↗</span><div class="nav-icon">03</div><h3>Inventory</h3><p>See stock levels, sold-out items and product availability.</p></a>
+   <a class="navcard" href="manage.html#product-costs"><span class="nav-arrow">↗</span><div class="nav-icon">04</div><h3>My Profits</h3><p>Review private purchase costs and margin calculated from sales.</p></a>
+   <a class="navcard" href="manage.html#customers"><span class="nav-arrow">↗</span><div class="nav-icon">05</div><h3>Customers</h3><p>View customer profiles, contact details and order history.</p></a>
+   <a class="navcard" href="manage.html#wishlists"><span class="nav-arrow">↗</span><div class="nav-icon">06</div><h3>Saved wishlists</h3><p>See which jewellery products customers save for later.</p></a>
+   <a class="navcard" href="manage.html#activity"><span class="nav-arrow">↗</span><div class="nav-icon">07</div><h3>Store activity</h3><p>Review recent product views and customer shopping events.</p></a>
+   <a class="navcard" href="manage.html#audit"><span class="nav-arrow">↗</span><div class="nav-icon">08</div><h3>Audit trail</h3><p>Check saved order status changes and payment events.</p></a>
+  </div>
+ </section>
+
+ <section class="lower-grid">
+  <div class="box">
+   <div class="box-head"><div><h3>Recent orders</h3><div class="metric-note" style="margin-top:6px">Latest activity from your store</div></div><a class="text-link" href="manage.html#orders">View all orders ↗</a></div>
+   <div id="recentOrders"><div class="empty">Loading recent orders…</div></div>
+  </div>
+  <div class="box">
+   <div class="box-head"><div><h3>At a glance</h3><div class="metric-note" style="margin-top:6px">Quick store health check</div></div></div>
+   <div class="quick-list">
+    <div class="quick-row"><div class="quick-mini">ST</div><div class="quick-copy"><strong>Stock needs attention</strong><span>Products with three or fewer units, or manually marked sold out.</span></div><div class="quick-value" id="quickLowStock">0</div></div>
+    <div class="quick-row"><div class="quick-mini">MG</div><div class="quick-copy"><strong>Orders moving</strong><span>Packed or shipped and awaiting delivery.</span></div><div class="quick-value" id="quickTransit">0</div></div>
+    <div class="quick-row"><div class="quick-mini">PM</div><div class="quick-copy"><strong>Margins accounted for</strong><span>Valid orders where all item purchase-cost snapshots are available.</span></div><div class="quick-value" id="quickCosts">0 / 0</div></div>
+    <div class="quick-row"><div class="quick-mini">↗</div><div class="quick-copy"><strong>Open your full admin panel</strong><span>Product editing, fulfilment, customer data and finance tools.</span></div><a class="text-link" href="manage.html">Open ↗</a></div>
+   </div>
+  </div>
+ </section>
+ <footer class="footer"><span>© Velora Jewells · <strong>Private admin workspace</strong></span><span>Sales and margin data refresh when the dashboard is refreshed.</span></footer>
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL='https://arypnpohredubfaymuwm.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_aJZyDdFiMkOuhmIxEKIuuA_QALzapmi';
+const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+let allProducts=[],allOrders=[];
+const TZ='Asia/Kolkata';
+const currency=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+function status(text,kind){$('status').textContent=text;$('status').className='status'+(kind?' '+kind:'')}
+function isAdmin(user){return user?.app_metadata?.role==='admin'}
+function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function dateKey(value){
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(value?new Date(value):new Date());
+ const p=Object.fromEntries(parts.map(x=>[x.type,x.value]));
+ return p.year+'-'+p.month+'-'+p.day;
 }
-function orderCostInfo(o){
- const items=o.order_items||[];
- if(!items.length||items.some(i=>i.unit_cost_inr==null))return {complete:false,revenue:Number(o.subtotal_inr||0),cost:null,expenses:Number(o.admin_expenses_inr||0),profit:null};
+function updateClock(){
+ const now=new Date();
+ $('clock').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(now);
+ $('clockDate').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:TZ,weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now);
+ $('welcomeDate').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:TZ,weekday:'short',day:'2-digit',month:'short',year:'numeric'}).format(now);
+ const hour=Number(new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',hourCycle:'h23'}).format(now));
+ const greeting=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+ $('greeting').innerHTML=escapeHtml(greeting)+'<span>.</span>';
+}
+function orderProfit(order){
+ const items=order.order_items||[];
+ if(!items.length||items.some(i=>i.unit_cost_inr==null||i.unit_price_inr==null))return {complete:false,profit:null};
  const revenue=items.reduce((sum,i)=>sum+Number(i.unit_price_inr||0)*Number(i.quantity||0),0);
  const cost=items.reduce((sum,i)=>sum+Number(i.unit_cost_inr||0)*Number(i.quantity||0),0);
- const expenses=Number(o.admin_expenses_inr||0);
- return {complete:true,revenue,cost,expenses,profit:revenue-cost-expenses};
+ return {complete:true,profit:revenue-cost-Number(order.admin_expenses_inr||0)};
 }
-function renderFinance(){
- const included=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&!['refunded','failed'].includes(o.payment_status));
- const known=included.map(o=>({o,c:orderCostInfo(o)})).filter(x=>x.c.complete);
- const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
- const totalMargin=known.reduce((sum,x)=>sum+x.c.profit,0);
- const profitNode=$('statMyProfits');
- const noteNode=$('statMyProfitsNote');
- if(profitNode){
-  profitNode.textContent=included.length===0?'—':known.length===0?'—':money(totalMargin);
-  profitNode.className=known.length&&totalMargin<0?'profit-negative':'';
-  profitNode.title='Calculated from valid orders with saved purchase-cost snapshots, less recorded order expenses.';
- }
- if(noteNode){
-  noteNode.textContent=included.length===0?'Shows after a sale':known.length===0?'Sale exists, but cost data is missing':'Auto-calculated from sales';
-  if(known.length<included.length&&known.length>0)noteNode.textContent='Some sales need cost data';
- }
- // Track sold-product margins from actual order item cost snapshots only.
- // Unsold products deliberately show "—" instead of a theoretical margin.
- const productSales=new Map();
- for(const o of included){
-  for(const item of (o.order_items||[])){
-   const productId=item.product_id;
-   if(!productId)continue;
-   const qty=Number(item.quantity||0);
-   const entry=productSales.get(productId)||{soldQty:0,margin:0,missingCost:false};
-   entry.soldQty+=qty;
-   if(item.unit_cost_inr==null||item.unit_price_inr==null){
-    entry.missingCost=true;
-   }else{
-    entry.margin+=(Number(item.unit_price_inr)-Number(item.unit_cost_inr))*qty;
-   }
-   productSales.set(productId,entry);
-  }
- }
- const rows=products.filter(p=>p.is_active||p.stock_quantity>0);
- $('financeProducts').innerHTML=rows.length?'<div class="tablewrap"><table><thead><tr><th>Product</th><th>Private purchase cost</th><th>Sell price</th><th>Margin from sales</th><th>Sold units</th><th>Stock</th><th>Availability</th><th></th></tr></thead><tbody>'+rows.map(p=>{
-  const hasCost=productCosts.has(p.id),cost=hasCost?Number(productCosts.get(p.id)):null;
-  const sale=productSales.get(p.id)||{soldQty:0,margin:0,missingCost:false};
-  const showMargin=sale.soldQty>0&&!sale.missingCost;
-  return '<tr><td>'+escapeHtml(p.name)+'</td><td><input type="number" min="0" step="1" required data-product-cost="'+p.id+'" value="'+(hasCost?cost:'')+'" placeholder="Buy cost ₹" aria-label="Private purchase cost for '+escapeHtml(p.name)+'"></td><td>'+money(p.price_inr)+'</td><td class="'+(showMargin?(sale.margin>=0?'profit-positive':'profit-negative'):'')+'">'+(showMargin?money(sale.margin):'—')+'</td><td>'+sale.soldQty+'</td><td>'+Number(p.stock_quantity||0)+'</td><td>'+(p.is_sold_out||Number(p.stock_quantity)<=0?'<span class="stockbadge">Sold Out</span>':p.is_active?'Available':'Draft')+'</td><td><button type="button" class="btn secondary" data-save-cost="'+p.id+'">Save cost</button></td></tr>';
- }).join('')+'</tbody></table></div>':'<p class="muted">Add a product, then enter its private purchase cost here.</p>';
+function validOrders(){
+ return allOrders.filter(o=>!['cancelled','returned'].includes(String(o.order_status||'').toLowerCase())&&!['refunded','failed'].includes(String(o.payment_status||'').toLowerCase()));
 }
-function downloadCsv(filename,rows){
- const csv=rows.map(row=>row.map(v=>{const x=String(v??'');return '"'+x.replace(/"/g,'""')+'"'}).join(',')).join('\r\n');
- const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
- const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-}
-function formatAddress(a){if(!a||typeof a!=='object')return '';return [a.line1,a.line2,a.city,a.state,a.pincode,a.country].filter(Boolean).join(', ')}
-function renderCustomers(){
- const q=($('customerSearch')?.value||'').trim().toLowerCase();
- const filtered=customers.filter(c=>[c.display_name,c.email,c.phone,formatAddress(c.shipping_address)].join(' ').toLowerCase().includes(q));
- $('customers').innerHTML=filtered.length?'<div class="tablewrap"><table><thead><tr><th>Customer</th><th>Contact</th><th>Default address</th><th>Orders</th><th>Wishlist</th><th>Profile created</th></tr></thead><tbody>'+filtered.map(c=>{
- const relatedOrders=orders.filter(o=>o.user_id===c.id||(c.email&&String(o.customer_email||'').toLowerCase()===String(c.email).toLowerCase())).length;
- const relatedWish=wishlists.filter(w=>w.user_id===c.id).length;
- return '<tr><td><strong>'+escapeHtml(c.display_name||'Customer')+'</strong><div class="tiny">'+escapeHtml(c.id)+'</div></td><td>'+escapeHtml(c.email||'No email saved')+'<br>'+escapeHtml(c.phone||'No phone saved')+'</td><td>'+escapeHtml(formatAddress(c.shipping_address)||'No default address saved')+'</td><td>'+relatedOrders+'</td><td>'+relatedWish+'</td><td>'+escapeHtml(c.created_at?new Date(c.created_at).toLocaleDateString('en-IN'):'—')+'</td></tr>'
- }).join('')+'</tbody></table></div>':'<p class="muted">No customer profiles match this search.</p>';
-}
-function renderWishlists(){
- const q=($('wishlistSearch')?.value||'').trim().toLowerCase();
- const pmap=new Map(products.map(p=>[p.id,p]));
- const cmap=new Map(customers.map(c=>[c.id,c]));
- const filtered=wishlists.filter(w=>{const c=cmap.get(w.user_id)||{},p=pmap.get(w.product_id)||{};return [c.display_name,c.email,p.name,p.category].join(' ').toLowerCase().includes(q)});
- $('wishlists').innerHTML=filtered.length?'<div class="tablewrap"><table><thead><tr><th>Customer</th><th>Saved product</th><th>Price</th><th>Category</th><th>Saved at</th></tr></thead><tbody>'+filtered.map(w=>{const c=cmap.get(w.user_id)||{},p=pmap.get(w.product_id)||{};return '<tr><td>'+escapeHtml(c.display_name||'Customer')+'<br>'+escapeHtml(c.email||w.user_id)+'</td><td>'+escapeHtml(p.name||'Product no longer listed')+'</td><td>'+(p.price_inr==null?'—':'₹'+Number(p.price_inr).toLocaleString('en-IN'))+'</td><td>'+escapeHtml(p.category||'—')+'</td><td>'+escapeHtml(w.created_at?new Date(w.created_at).toLocaleString('en-IN'):'—')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No saved wishlist items match this search yet.</p>';
-}
-function renderActivity(){
- const filter=$('activityFilter')?.value||'';
- const filtered=activityEvents.filter(e=>!filter||e.event_type===filter);
- const pmap=new Map(products.map(p=>[p.id,p]));
- const count={};for(const e of activityEvents)count[e.event_type]=(count[e.event_type]||0)+1;
- const summary=Object.entries(count).map(([k,v])=>escapeHtml(k.replace(/_/g,' '))+': <strong>'+v+'</strong>').join(' · ');
- $('activity').innerHTML=(summary?'<p class="muted">'+summary+'</p>':'')+(filtered.length?'<div class="tablewrap"><table><thead><tr><th>Time</th><th>Action</th><th>Product</th><th>Quantity</th><th>Visitor/session</th></tr></thead><tbody>'+filtered.map(e=>{const p=pmap.get(e.product_id)||{};return '<tr><td>'+escapeHtml(e.created_at?new Date(e.created_at).toLocaleString('en-IN'):'—')+'</td><td>'+escapeHtml(String(e.event_type||'').replace(/_/g,' '))+'</td><td>'+escapeHtml(p.name||'Unknown/deleted product')+'</td><td>'+Number(e.quantity||1)+'</td><td>'+escapeHtml(e.session_id?String(e.session_id).slice(0,12)+'…':'—')+'</td></tr>'}).join('')+'</tbody></table></div>':'<p class="muted">No events match this filter.</p>');
-}
-function renderAudit(){
- const orderMap=new Map(orders.map(o=>[o.id,o]));
- const hist=statusHistory.map(h=>({when:h.created_at,type:'Order status',order:orderMap.get(h.order_id)?.order_number||h.order_id,detail:(h.old_status||'—')+' → '+h.new_status,note:h.note||''}));
- const pay=paymentEvents.map(p=>({when:p.created_at,type:'Payment '+(p.provider||''),order:orderMap.get(p.order_id)?.order_number||p.order_id||'Unlinked event',detail:p.event_type||'—',note:p.processed_at?'Processed':'Not marked processed'}));
- const rows=[...hist,...pay].sort((a,b)=>new Date(b.when||0)-new Date(a.when||0)).slice(0,100);
- $('auditTrail').innerHTML=rows.length?'<div class="tablewrap"><table><thead><tr><th>Time</th><th>Type</th><th>Order</th><th>Event / change</th><th>Note</th></tr></thead><tbody>'+rows.map(r=>'<tr><td>'+escapeHtml(r.when?new Date(r.when).toLocaleString('en-IN'):'—')+'</td><td>'+escapeHtml(r.type)+'</td><td>'+escapeHtml(r.order)+'</td><td>'+escapeHtml(r.detail)+'</td><td>'+escapeHtml(r.note)+'</td></tr>').join('')+'</tbody></table></div>':'<p class="muted">No recorded order or payment audit events yet.</p>';
-}
-async function load(){
- const results=await Promise.all([
-  db.from('products').select('*').order('created_at',{ascending:false}),
-  db.from('orders').select('*,order_items(*)').order('created_at',{ascending:false}).limit(500),
-  db.from('profiles').select('id,display_name,email,phone,shipping_address,created_at').order('created_at',{ascending:false}).limit(1000),
-  db.from('wishlist_items').select('id,user_id,product_id,created_at').order('created_at',{ascending:false}).limit(2000),
-  db.from('cart_events').select('id,session_id,product_id,event_type,quantity,created_at').order('created_at',{ascending:false}).limit(200),
-  db.from('order_status_history').select('id,order_id,old_status,new_status,note,changed_by,created_at').order('created_at',{ascending:false}).limit(100),
-  db.from('payment_events').select('id,order_id,provider,event_type,processed_at,created_at').order('created_at',{ascending:false}).limit(100),
-  db.from('product_costs').select('product_id,cost_price_inr,updated_at').order('updated_at',{ascending:false})
- ]);
- const names=['products','orders','customer profiles','wishlist items','store activity','order status history','payment audit events','private product costs'];
- for(let i=0;i<results.length;i++){if(results[i].error)throw new Error(names[i]+': '+results[i].error.message)}
- products=results[0].data||[];orders=results[1].data||[];customers=results[2].data||[];wishlists=results[3].data||[];activityEvents=results[4].data||[];statusHistory=results[5].data||[];paymentEvents=results[6].data||[];productCosts=new Map((results[7].data||[]).map(c=>[c.product_id,Number(c.cost_price_inr)]));
- render();renderOrders();renderCustomers();renderWishlists();renderActivity();renderAudit();
-}
-function renderOrders(){
- const root=$('orders');
- if(!orders.length){root.innerHTML='<p class="muted">No orders yet. New orders will appear here.</p>';return}
- const statuses=['pending','confirmed','packed','shipped','delivered','cancelled','returned'];
- root.innerHTML=orders.map(o=>{
-  const address=o.shipping_address||{};
-  const items=o.order_items||[];
-  const info=orderCostInfo(o);
-  const itemRows=items.map(i=>{const qty=Number(i.quantity||0),price=Number(i.unit_price_inr||0),cost=i.unit_cost_inr==null?null:Number(i.unit_cost_inr),margin=cost==null?null:(price-cost)*qty;return '<tr><td>'+escapeHtml(i.product_name)+'</td><td>'+qty+'</td><td>₹'+price.toLocaleString('en-IN')+'</td><td>'+(cost==null?'<span class="pill warnpill">Cost missing</span>':'₹'+cost.toLocaleString('en-IN'))+'</td><td>₹'+(price*qty).toLocaleString('en-IN')+'</td><td class="'+(margin==null?'':margin>=0?'profit-positive':'profit-negative')+'">'+(margin==null?'—':'₹'+margin.toLocaleString('en-IN'))+'</td></tr>'}).join('');
-  const profitLabel=['cancelled','returned'].includes(o.order_status)?'Excluded from My Profits':info.complete?'Order margin: ₹'+info.profit.toLocaleString('en-IN'):'Margin unavailable — purchase cost missing for one or more items';
-  return '<article class="panel" style="margin:14px 0;padding:16px"><div class="productrow" style="border:0;padding:0"><div><strong>'+escapeHtml(o.order_number)+'</strong><div class="muted">'+new Date(o.created_at).toLocaleString('en-IN')+' · '+escapeHtml(String(o.payment_method||'').toUpperCase())+' · '+escapeHtml(o.payment_status||'')+'</div><div class="muted">Order value: ₹'+Number(o.subtotal_inr||0).toLocaleString('en-IN')+' · Paid now: ₹'+Number(o.paid_amount_inr||0).toLocaleString('en-IN')+' · Due at delivery: ₹'+Number(o.amount_due_inr||0).toLocaleString('en-IN')+'</div><strong class="'+(info.complete&&info.profit<0?'profit-negative':info.complete?'profit-positive':'')+'">'+escapeHtml(profitLabel)+'</strong></div><span class="pill">'+escapeHtml(o.order_status||'pending')+'</span></div><div class="muted" style="margin:12px 0"><strong>'+escapeHtml(o.customer_name)+'</strong> · '+escapeHtml(o.customer_phone)+(o.customer_email?' · '+escapeHtml(o.customer_email):'')+'<br>'+escapeHtml([address.line1,address.line2,address.city,address.state,address.pincode].filter(Boolean).join(', '))+'</div><div class="tablewrap"><table class="order-items"><thead><tr><th>Item</th><th>Qty</th><th>Sell / unit</th><th>Buy / unit</th><th>Item sales</th><th>Item margin</th></tr></thead><tbody>'+itemRows+'</tbody></table></div><div class="grid"><div><label>Status</label><select data-status="'+o.id+'">'+statuses.map(st=>'<option value="'+st+'" '+(o.order_status===st?'selected':'')+'>'+st.charAt(0).toUpperCase()+st.slice(1)+'</option>').join('')+'</select></div><div><label>Extra order expenses (₹)</label><input type="number" min="0" step="1" data-expense="'+o.id+'" value="'+Number(o.admin_expenses_inr||0)+'"></div><div><label>Extra expense note</label><input data-expense-note="'+o.id+'" value="'+escapeHtml(o.admin_expense_note||'')+'" placeholder="Packaging, shipping, payment fee…"></div><div><label>Courier</label><input data-courier="'+o.id+'" value="'+escapeHtml(o.tracking_company||'')+'" placeholder="India Post / courier"></div><div><label>Tracking / AWB</label><input data-tracking="'+o.id+'" value="'+escapeHtml(o.tracking_number||'')+'" placeholder="Tracking number"></div><div><label>Tracking URL</label><input data-trackurl="'+o.id+'" value="'+escapeHtml(o.tracking_url||'')+'" placeholder="https://…"></div></div><div class="actions"><button class="btn" data-save-order="'+o.id+'">Save order & expenses</button></div></article>';
- }).join('');
-}
-async function sessionCheck(){if(!db){status('Supabase client failed to load. Check the CDN and project settings.','bad');return}const {data:{session}}=await db.auth.getSession();if(!session){$('loginPanel').classList.remove('hidden');$('appPanel').classList.add('hidden');status('Not signed in.','');return}if(!admin(session.user)){$('loginPanel').classList.remove('hidden');$('appPanel').classList.add('hidden');status('Access denied: this account does not have the server-managed admin role. Ask the project owner to grant it through a trusted server-side process.','bad');return}$('loginPanel').classList.add('hidden');$('appPanel').classList.remove('hidden');status('Admin access verified for '+(session.user.email||'your account')+'.','good');await load()}
-$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){status(error.message,'bad');return}await sessionCheck()});
-$('googleBtn').onclick=async()=>{const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('?')[0]}});if(error)status(error.message,'bad')};
-$('imageFile').addEventListener('change',()=>{const file=$('imageFile').files?.[0];if(!file){if($('image').value)showImagePreview($('image').value);else showImagePreview('');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)){status('Please upload a JPG, PNG or WebP image.','bad');$('imageFile').value='';return}if(file.size>5*1024*1024){status('Image must be 5 MB or smaller.','bad');$('imageFile').value='';return}showImagePreview(URL.createObjectURL(file),'Selected image: '+file.name)}); 
-$('image').addEventListener('input',()=>{if(!$('imageFile').files?.length)showImagePreview($('image').value,'Image URL preview')});
-$('productForm').addEventListener('submit',async e=>{
- e.preventDefault();
- if(!db){status('Store database is not available.','bad');return}
- const submit=$('productForm').querySelector('button[type="submit"]');submit.disabled=true;
- try{
-  let id=$('productId').value;
-  const privateCostRaw=$('costPrice').value.trim();
-  const privateCost=Number(privateCostRaw);
-  if(privateCostRaw===''||!Number.isInteger(privateCost)||privateCost<0)throw new Error('Enter a valid private purchase cost of ₹0 or more.');
-  const slug=$('name').value.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  let imageUrl=$('image').value.trim();
-  const file=$('imageFile').files?.[0];
-  if(file){
-   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('Choose a JPG, PNG or WebP image up to 5 MB.');
-   status('Uploading product photo…');
-   const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp';
-   const path=crypto.randomUUID()+'/'+Date.now()+'.'+ext;
-   const {error:uploadError}=await db.storage.from('velora-product-images').upload(path,file,{cacheControl:'3600',contentType:file.type,upsert:false});
-   if(uploadError)throw uploadError;
-   imageUrl=db.storage.from('velora-product-images').getPublicUrl(path).data.publicUrl;
-  }
-  const sellingPrice=Number($('price').value),originalMrp=Number($('compare').value);
-  if(!Number.isInteger(sellingPrice)||sellingPrice<0)throw new Error('Enter a valid selling price.');
-  if(!Number.isInteger(originalMrp)||originalMrp<=sellingPrice)throw new Error('Original MRP must be greater than the discounted selling price.');
-  const payload={name:$('name').value.trim(),slug,category:$('category').value,price_inr:sellingPrice,compare_at_price_inr:originalMrp,stock_quantity:Number($('stock').value),image_url:imageUrl,description:$('description').value.trim(),is_active:$('active').checked,is_featured:$('featured').checked,is_sold_out:$('soldOut').checked};
-  let productResult;
-  if(id){
-   productResult=await db.from('products').update(payload).eq('id',id).select('id').single();
-  }else{
-   productResult=await db.from('products').insert(payload).select('id').single();
-  }
-  if(productResult.error)throw productResult.error;
-  id=productResult.data.id;
-  $('productId').value=id;
-  $('formTitle').textContent='Edit product';
-  const {error:costError}=await db.from('product_costs').upsert({product_id:id,cost_price_inr:privateCost,updated_at:new Date().toISOString()},{onConflict:'product_id'});
-  if(costError)throw new Error('Product details were saved, but its private cost could not be saved: '+costError.message+'. Please retry Save product; this will update the same product.');
-  status('Product and private purchase cost saved. The cost is stored separately from the public catalogue and used in profit calculations. '+(payload.is_sold_out?'This item is marked SOLD OUT.':''),'good');reset();await load();
- }catch(err){status(err.message||'Could not save product.','bad')}
- finally{submit.disabled=false}
-});
-$('orders').addEventListener('click',async e=>{
- const b=e.target.closest('[data-save-order]');if(!b)return;
- const id=b.dataset.saveOrder,o=orders.find(x=>x.id===id);if(!o)return;
- const nextStatus=document.querySelector('[data-status="'+id+'"]').value;
- const expenseRaw=document.querySelector('[data-expense="'+id+'"]').value;const expenseNote=document.querySelector('[data-expense-note="'+id+'"]').value.trim();const expenseValue=expenseRaw===''?0:Number(expenseRaw);if(!Number.isInteger(expenseValue)||expenseValue<0){status('Extra order expenses must be a whole number ₹0 or more.','bad');return}const payload={order_status:nextStatus,admin_expenses_inr:expenseValue,admin_expense_note:expenseNote||null,tracking_company:document.querySelector('[data-courier="'+id+'"]').value.trim()||null,tracking_number:document.querySelector('[data-tracking="'+id+'"]').value.trim()||null,tracking_url:document.querySelector('[data-trackurl="'+id+'"]').value.trim()||null};
- const {error}=await db.from('orders').update(payload).eq('id',id);if(error){status(error.message,'bad');return}
- if(nextStatus!==o.order_status){const hist=await db.from('order_status_history').insert({order_id:id,old_status:o.order_status,new_status:nextStatus,note:'Updated in admin dashboard'});if(hist.error)status('Order updated; history error: '+hist.error.message,'bad')}
- status('Order fulfilment updated.','good');await load();
-});
-$('financeProducts').addEventListener('click',async e=>{
- const b=e.target.closest('[data-save-cost]');if(!b)return;
- const id=b.dataset.saveCost;
- const field=document.querySelector('[data-product-cost="'+id+'"]');
- const value=Number(field?.value);
- if(!field||field.value.trim()===''||!Number.isInteger(value)||value<0){status('Enter a valid private purchase cost of ₹0 or more.','bad');return}
- b.disabled=true;
- try{
-  const {error}=await db.from('product_costs').upsert({product_id:id,cost_price_inr:value,updated_at:new Date().toISOString()},{onConflict:'product_id'});
+async function getAllProducts(){
+ const out=[];const pageSize=1000;let offset=0;
+ while(true){
+  const {data,error}=await db.from('products').select('id,name,stock_quantity,is_active,is_sold_out,created_at').order('created_at',{ascending:false}).range(offset,offset+pageSize-1);
   if(error)throw error;
-  status('Private purchase cost saved. It is not part of the public product catalog.','good');
-  await load();
- }catch(err){status('Could not save private cost: '+(err.message||'Unknown error'),'bad')}
- finally{b.disabled=false}
+  const batch=data||[];out.push(...batch);
+  if(batch.length<pageSize||offset>=49000)break;
+  offset+=pageSize;
+ }
+ return out;
+}
+async function getAllOrders(){
+ const out=[];const pageSize=1000;let offset=0;
+ while(true){
+  const {data,error}=await db.from('orders').select('id,order_number,created_at,order_status,payment_status,subtotal_inr,paid_amount_inr,admin_expenses_inr,order_items(id,product_id,product_name,quantity,unit_price_inr,unit_cost_inr)').order('created_at',{ascending:false}).range(offset,offset+pageSize-1);
+  if(error)throw error;
+  const batch=data||[];out.push(...batch);
+  if(batch.length<pageSize||offset>=49000)break;
+  offset+=pageSize;
+ }
+ return out;
+}
+function badgeClass(statusValue){
+ const st=String(statusValue||'pending').toLowerCase();
+ if(st==='delivered')return 'delivered';
+ if(st==='pending'||st==='confirmed')return 'pending';
+ if(st==='cancelled'||st==='returned')return st;
+ return '';
+}
+function renderDashboard(){
+ const included=validOrders();
+ const known=included.map(o=>({order:o,calc:orderProfit(o)})).filter(x=>x.calc.complete);
+ const profit=known.reduce((sum,x)=>sum+x.calc.profit,0);
+ const totalSales=included.reduce((sum,o)=>sum+Number(o.subtotal_inr||0),0);
+ const todayKey=dateKey();
+ const monthKey=todayKey.slice(0,7);
+ const today=included.filter(o=>dateKey(o.created_at)===todayKey);
+ const month=included.filter(o=>dateKey(o.created_at).slice(0,7)===monthKey);
+ const todaySales=today.reduce((sum,o)=>sum+Number(o.subtotal_inr||0),0);
+ const monthSales=month.reduce((sum,o)=>sum+Number(o.subtotal_inr||0),0);
+ const pending=included.filter(o=>String(o.order_status||'').toLowerCase()==='pending').length;
+ const delivered=included.filter(o=>String(o.order_status||'').toLowerCase()==='delivered').length;
+ const transit=included.filter(o=>['packed','shipped'].includes(String(o.order_status||'').toLowerCase())).length;
+ const low=allProducts.filter(p=>p.is_sold_out||Number(p.stock_quantity||0)<=3).length;
+ const stock=allProducts.reduce((sum,p)=>sum+Number(p.stock_quantity||0),0);
+ $('metricProfit').textContent=known.length?currency(profit):'—';
+ $('profitNote').textContent=included.length===0?'My Profits appears when a sale has saved cost data':known.length===0?'Sales exist, but purchase-cost snapshots are missing':'Calculated on '+known.length+' order'+(known.length===1?'':'s')+' with complete cost data';
+ $('metricSales').textContent=currency(totalSales);
+ $('metricToday').textContent=currency(todaySales);
+ $('todayNote').textContent=today.length+' valid order'+(today.length===1?'':'s')+' today';
+ $('metricMonth').textContent=currency(monthSales);
+ $('monthNote').textContent=month.length+' valid order'+(month.length===1?'':'s')+' this month';
+ $('metricOrders').textContent=allOrders.length.toLocaleString('en-IN');
+ $('metricPending').textContent=pending.toLocaleString('en-IN');
+ $('metricDelivered').textContent=delivered.toLocaleString('en-IN');
+ $('metricProducts').textContent=allProducts.filter(p=>p.is_active&&!p.is_sold_out&&Number(p.stock_quantity||0)>0).length.toLocaleString('en-IN');
+ $('stockNote').textContent=stock.toLocaleString('en-IN')+' units total across '+allProducts.length+' products';
+ $('quickLowStock').textContent=low.toLocaleString('en-IN');
+ $('quickTransit').textContent=transit.toLocaleString('en-IN');
+ $('quickCosts').textContent=known.length+' / '+included.length;
+ renderRecentOrders(included);
+}
+function renderRecentOrders(orders){
+ const root=$('recentOrders');
+ if(!orders.length){root.innerHTML='<div class="empty">No orders have arrived yet. New customer orders will appear here automatically after refresh.</div>';return}
+ const recent=orders.slice().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8);
+ root.innerHTML='<div class="table-wrap"><table><thead><tr><th>Order</th><th>Status</th><th>Order value</th><th>Margin</th></tr></thead><tbody>'+recent.map(o=>{
+  const calc=orderProfit(o);
+  const state=String(o.order_status||'pending').toLowerCase();
+  return '<tr><td><div class="order-id">'+escapeHtml(o.order_number||o.id)+'</div><div class="order-date">'+escapeHtml(o.created_at?new Date(o.created_at).toLocaleDateString('en-IN',{timeZone:TZ,day:'2-digit',month:'short'}):'—')+'</div></td><td><span class="badge '+badgeClass(state)+'">'+escapeHtml(state)+'</span></td><td>'+currency(o.subtotal_inr)+'</td><td>'+(calc.complete?'<span style="color:'+(calc.profit<0?'var(--red)':'var(--green)')+'">'+currency(calc.profit)+'</span>':'<span style="color:var(--muted)">—</span>')+'</td></tr>';
+ }).join('')+'</tbody></table></div>';
+}
+async function loadDashboard(){
+ status('Refreshing live store data…');
+ try{
+  const loaded=await Promise.all([getAllProducts(),getAllOrders()]);
+  allProducts=loaded[0];allOrders=loaded[1];
+  renderDashboard();
+  status('Dashboard updated successfully · '+new Date().toLocaleTimeString('en-IN',{timeZone:TZ})+'.','good');
+ }catch(error){
+  status('Could not load store data: '+(error.message||'Unknown error')+'. Check your admin access and try Refresh data.','bad');
+ }
+}
+async function sessionCheck(){
+ if(!db){status('Supabase client could not load. Refresh this page or check the network.','bad');return}
+ const {data:{session},error}=await db.auth.getSession();
+ if(error){status('Could not check the current admin session: '+error.message,'bad');return}
+ if(!session){
+  $('loginPanel').classList.remove('hidden');$('dashboardApp').classList.add('hidden');$('logoutBtn').classList.add('hidden');
+  status('Please sign in with your authorised admin account.');return;
+ }
+ if(!isAdmin(session.user)){
+  $('loginPanel').classList.remove('hidden');$('dashboardApp').classList.add('hidden');$('logoutBtn').classList.remove('hidden');
+  status('Access denied. This account does not have the server-managed admin role.','bad');return;
+ }
+ $('loginPanel').classList.add('hidden');$('dashboardApp').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');
+ $('adminEmail').textContent=session.user.email||'Admin verified';
+ status('Secure admin access verified.','good');
+ await loadDashboard();
+}
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();const b=$('loginForm').querySelector('button[type="submit"]');b.disabled=true;b.textContent='Signing in…';
+ try{const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)throw error;await sessionCheck()}
+ catch(error){status(error.message||'Sign-in failed.','bad')}
+ finally{b.disabled=false;b.textContent='Enter dashboard →'}
 });
-$('inventory').addEventListener('click',async e=>{const edit=e.target.closest('[data-edit]'),toggle=e.target.closest('[data-toggle]');if(edit){const p=products.find(x=>x.id===edit.dataset.edit);if(p)fill(p);window.scrollTo({top:0,behavior:'smooth'});return}if(toggle){const p=products.find(x=>x.id===toggle.dataset.toggle);if(!p)return;const {error}=await db.from('products').update({is_active:!p.is_active}).eq('id',p.id);if(error){status(error.message,'bad');return}await load();status('Product visibility updated.','good')}});
-
-$('customerSearch').addEventListener('input',renderCustomers);
-$('wishlistSearch').addEventListener('input',renderWishlists);
-$('activityFilter').addEventListener('change',renderActivity);
-$('exportCustomers').onclick=()=>downloadCsv('velora-customers.csv',[['Name','Email','Phone','Address','Profile created','Order count','Wishlist count'],...customers.map(c=>[c.display_name,c.email,c.phone,formatAddress(c.shipping_address),c.created_at,orders.filter(o=>o.user_id===c.id||(c.email&&String(o.customer_email||'').toLowerCase()===String(c.email).toLowerCase())).length,wishlists.filter(w=>w.user_id===c.id).length])]);
-$('exportActivity').onclick=()=>{const pmap=new Map(products.map(p=>[p.id,p]));downloadCsv('velora-store-activity.csv',[['Time','Action','Product','Quantity','Session'],...activityEvents.map(e=>[e.created_at,e.event_type,pmap.get(e.product_id)?.name,e.quantity,e.session_id])])};
-$('resetBtn').onclick=reset;$('clearSessionBtn').onclick=async()=>{await db.auth.signOut();await sessionCheck()};$('logoutBtn').onclick=async()=>{await db.auth.signOut();await sessionCheck()};db?.auth.onAuthStateChange(()=>{setTimeout(()=>sessionCheck().catch(e=>status(e.message,'bad')),0)});sessionCheck().catch(e=>status(e.message,'bad'));
-</script></body></html>
+$('googleBtn').addEventListener('click',async()=>{
+ try{const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('#')[0].split('?')[0]}});if(error)throw error}
+ catch(error){status(error.message||'Google sign-in could not start.','bad')}
+});
+$('refreshBtn').addEventListener('click',loadDashboard);
+$('logoutBtn').addEventListener('click',async()=>{await db.auth.signOut();await sessionCheck()});
+db?.auth.onAuthStateChange(()=>{setTimeout(()=>sessionCheck().catch(e=>status(e.message,'bad')),0)});
+updateClock();setInterval(updateClock,1000);
+sessionCheck().catch(error=>status(error.message||'Could not open admin dashboard.','bad'));
+</script>
+</body>
+</html>
