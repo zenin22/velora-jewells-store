@@ -15,7 +15,7 @@
   <div class="finance-card"><span class="kicker">Total sales</span><strong id="profitAllSales">₹0</strong><small id="profitAllSalesNote">All valid orders</small></div>
   <div class="finance-card"><span class="kicker">Sales counted in profit</span><strong id="profitAccountedSales">₹0</strong><small id="profitAccountedSalesNote">Orders with complete cost data</small></div>
   <div class="finance-card"><span class="kicker">Product purchase costs</span><strong id="profitProductCosts">₹0</strong><small>Cost of items in accounted orders</small></div>
-  <div class="finance-card"><span class="kicker">Other order expenses</span><strong id="profitExtraExpenses">₹0</strong><small>Recorded packaging, shipping or fees</small></div>
+  <div class="finance-card"><span class="kicker">Other order expenses</span><strong id="profitExtraExpenses">₹0</strong><small>Recorded on orders counted in profit</small></div>
   <div class="finance-card"><span class="kicker">Total expenses</span><strong id="profitTotalExpenses">₹0</strong><small>Purchase costs + other expenses</small></div>
   <div class="finance-card featured"><span class="kicker">Net profit</span><strong id="profitNet">₹0</strong><small id="profitNetNote">Sales counted in profit − total expenses</small></div>
   <div class="finance-card"><span class="kicker">Sales awaiting cost data</span><strong id="profitAwaitingSales">₹0</strong><small id="profitAwaitingNote">Orders requiring cost review</small></div>
@@ -279,6 +279,13 @@ $('orders').addEventListener('click',async e=>{
  const {error}=await db.from('orders').update(payload).eq('id',id);if(error){status(error.message,'bad');return}
  if(nextStatus!==o.order_status){const hist=await db.from('order_status_history').insert({order_id:id,old_status:o.order_status,new_status:nextStatus,note:'Updated in admin dashboard'});if(hist.error)status('Order updated; history error: '+hist.error.message,'bad')}
  status('Order fulfilment updated.','good');await load();
+});
+$('refreshFinanceBtn').addEventListener('click',async()=>{
+ const button=$('refreshFinanceBtn');
+ button.disabled=true;button.textContent='Refreshing…';
+ try{await load();status('Profit summary refreshed from the latest order data.','good')}
+ catch(err){status('Could not refresh profit totals: '+(err.message||'Unknown error'),'bad')}
+ finally{button.disabled=false;button.textContent='↻ Refresh totals'}
 });
 $('financeProducts').addEventListener('click',async e=>{
  const b=e.target.closest('[data-save-cost]');if(!b)return;
