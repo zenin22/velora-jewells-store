@@ -46,8 +46,8 @@ drop trigger if exists on_auth_user_created on auth.users; create trigger on_aut
 
 
 -- Admin-managed cost tracking, image uploads and sold-out status (reference schema additions).
+-- Keep purchase cost in a dedicated RLS-protected table; it is never a products column.
 alter table public.products
-  add column if not exists cost_price_inr integer check (cost_price_inr is null or cost_price_inr >= 0),
   add column if not exists is_sold_out boolean not null default false;
 alter table public.order_items
   add column if not exists unit_cost_inr integer check (unit_cost_inr is null or unit_cost_inr >= 0);
@@ -55,12 +55,25 @@ alter table public.orders
   add column if not exists admin_expenses_inr integer not null default 0 check (admin_expenses_inr >= 0),
   add column if not exists admin_expense_note text;
 
+create table if not exists public.product_costs (
+  product_id uuid primary key references public.products(id) on delete cascade,
+  cost_price_inr integer not null check (cost_price_inr >= 0),
+  updated_at timestamptz not null default now()
+);
+alter table public.product_costs enable row level security;
+revoke all on public.product_costs from public,anon,authenticated;
+grant select,insert,update,delete on public.product_costs to authenticated;
+drop policy if exists "Admins manage product costs" on public.product_costs;
+create policy "Admins manage product costs" on public.product_costs for all to authenticated
+using ((select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin')
+with check ((select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin');
+
 create or replace function public.snapshot_order_item_cost()
 returns trigger language plpgsql security definer set search_path = ''
 as $$
 begin
   if new.unit_cost_inr is null and new.product_id is not null then
-    select p.cost_price_inr into new.unit_cost_inr from public.products p where p.id=new.product_id;
+    select pc.cost_price_inr into new.unit_cost_inr from public.product_costs pc where pc.product_id=new.product_id;
   end if;
   return new;
 end;
