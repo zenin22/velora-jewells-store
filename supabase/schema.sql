@@ -43,3 +43,47 @@ create or replace function public.handle_new_user() returns trigger language plp
 revoke all on function public.handle_new_user() from public,anon,authenticated;
 grant execute on function public.handle_new_user() to postgres,service_role;
 drop trigger if exists on_auth_user_created on auth.users; create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+
+
+-- Admin-managed cost tracking, image uploads and sold-out status (reference schema additions).
+alter table public.products
+  add column if not exists cost_price_inr integer check (cost_price_inr is null or cost_price_inr >= 0),
+  add column if not exists is_sold_out boolean not null default false;
+alter table public.order_items
+  add column if not exists unit_cost_inr integer check (unit_cost_inr is null or unit_cost_inr >= 0);
+alter table public.orders
+  add column if not exists admin_expenses_inr integer not null default 0 check (admin_expenses_inr >= 0),
+  add column if not exists admin_expense_note text;
+
+create or replace function public.snapshot_order_item_cost()
+returns trigger language plpgsql security definer set search_path = ''
+as $$
+begin
+  if new.unit_cost_inr is null and new.product_id is not null then
+    select p.cost_price_inr into new.unit_cost_inr from public.products p where p.id=new.product_id;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists snapshot_order_item_cost_before_insert on public.order_items;
+create trigger snapshot_order_item_cost_before_insert before insert on public.order_items
+for each row execute function public.snapshot_order_item_cost();
+revoke all on function public.snapshot_order_item_cost() from public,anon,authenticated;
+grant execute on function public.snapshot_order_item_cost() to postgres,service_role;
+
+insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
+values('velora-product-images','velora-product-images',true,5242880,array['image/jpeg','image/png','image/webp'])
+on conflict(id) do update set name=excluded.name,public=true,file_size_limit=5242880,allowed_mime_types=excluded.allowed_mime_types;
+drop policy if exists "Public can view Velora product images" on storage.objects;
+create policy "Public can view Velora product images" on storage.objects for select to anon,authenticated
+using(bucket_id='velora-product-images');
+drop policy if exists "Admins upload Velora product images" on storage.objects;
+create policy "Admins upload Velora product images" on storage.objects for insert to authenticated
+with check(bucket_id='velora-product-images' and (select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin');
+drop policy if exists "Admins update Velora product images" on storage.objects;
+create policy "Admins update Velora product images" on storage.objects for update to authenticated
+using(bucket_id='velora-product-images' and (select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin')
+with check(bucket_id='velora-product-images' and (select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin');
+drop policy if exists "Admins delete Velora product images" on storage.objects;
+create policy "Admins delete Velora product images" on storage.objects for delete to authenticated
+using(bucket_id='velora-product-images' and (select ((auth.jwt()->'app_metadata'::text)->>'role'::text))='admin');
