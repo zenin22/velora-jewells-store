@@ -182,6 +182,22 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 .profile-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.profile-stat{border:1px solid #483629;padding:12px 8px;text-align:center;background:#0a0807}.profile-stat strong{display:block;font-size:23px;color:#d6b78b}.profile-stat span{font-size:9px;color:#bca991;text-transform:uppercase;letter-spacing:.8px}
 .account-order{padding:12px 0;border-top:1px solid #3c2d24;font-size:12px;display:flex;justify-content:space-between;gap:12px}.account-order strong{color:#e4c9a0}.account-empty{padding:16px 0;color:#bcae9c;font-size:12px}
 @media(max-width:520px){.nav{gap:8px}.account-nav{gap:4px}.account-nav .navbtn{padding:8px 7px;font-size:9px}.account-panel{padding:20px}}
+
+/* Customer account, wishlist and profile */
+.account-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;border-bottom:1px solid #49392b;padding-bottom:12px}
+.account-tab{background:transparent;border:1px solid #574531;color:#dfc9a9;padding:9px 12px;font-size:11px;cursor:pointer}
+.account-tab.active{background:#c5a578;color:#100908;border-color:#c5a578}
+.account-view{display:none}.account-view.active{display:block}
+.profile-form label{display:block;font-size:11px;color:#c9b79d;margin:12px 0 6px}
+.profile-form input,.profile-form textarea{width:100%;padding:11px;background:#080707;border:1px solid #49392b;color:#f1e7d8}
+.wishlist-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.wishlist-row{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:center;border:1px solid #3d3026;padding:10px;margin:8px 0}
+.wishlist-row img{width:60px;height:60px;object-fit:cover}
+.wishlist-row button{background:transparent;border:1px solid #8b6b48;color:#e5cfad;padding:7px;font-size:10px}
+.wishlist-toggle{display:block;width:100%;margin-top:7px;background:transparent;border:1px solid #7b654b;padding:8px 10px;color:#e3d0b2;font:600 8px 'DM Sans',sans-serif;letter-spacing:1.4px}
+.wishlist-toggle.saved{color:#e4b8c9;border-color:#b66c88}
+@media(max-width:420px){.wishlist-row{grid-template-columns:48px 1fr}.wishlist-row img{width:48px;height:48px}.wishlist-row button{grid-column:2}}
+
 </style>
 </head>
 <body>
@@ -260,7 +276,7 @@ function toast(t){const el=document.getElementById('toast');el.textContent=t;el.
 function logEvent(type,pid){try{if(db)db.from('cart_events').insert({session_id:getSessionId(),product_id:pid||null,event_type:type,quantity:1}).then(()=>{}).catch(()=>{})}catch{}}
 function getSessionId(){let s=localStorage.getItem('velora_session');if(!s){s=crypto.randomUUID();localStorage.setItem('velora_session',s)}return s}
 function iconFor(p){return ({Pendants:'✧',Chains:'⌁',Bracelets:'◈',Rings:'◉'})[p.category]||'✦'}
-function renderProducts(){const items=allProducts.filter(p=>activeCategory==='All'||p.category===activeCategory);document.getElementById('productCount').textContent=items.length+' pieces';document.getElementById('products').innerHTML=items.length?items.map(p=>'<article class="product"><div class="product-img">'+(p.image_url?'<img src="'+safe(p.image_url)+'" alt="'+safe(p.name)+'" loading="lazy" onerror="this.remove()">':'<span>'+iconFor(p)+'</span>')+'</div><div class="product-info"><div class="category">'+safe(p.category)+'</div><h3>'+safe(p.name)+'</h3><div class="muted" style="font-size:11px;line-height:1.5">'+safe(p.description||'A Velora statement piece.')+'</div><div class="price">'+money(p.price_inr)+(p.compare_at_price_inr?'<span class="oldprice">'+money(p.compare_at_price_inr)+'</span>':'')+'</div><button class="add" data-add="'+safe(p.id)+'" '+(p.stock_quantity<=0?'disabled style="opacity:.55;cursor:not-allowed"':'')+'>'+(p.stock_quantity<=0?'Currently unavailable':'Add to bag')+'</button></div></article>').join(''):'<div class="empty">The collection is being prepared. Check back soon.</div>'}
+function renderProducts(){const items=allProducts.filter(p=>activeCategory==='All'||p.category===activeCategory);document.getElementById('productCount').textContent=items.length+' pieces';document.getElementById('products').innerHTML=items.length?items.map(p=>'<article class="product"><div class="product-img">'+(p.image_url?'<img src="'+safe(p.image_url)+'" alt="'+safe(p.name)+'" loading="lazy" onerror="this.remove()">':'<span>'+iconFor(p)+'</span>')+'</div><div class="product-info"><div class="category">'+safe(p.category)+'</div><h3>'+safe(p.name)+'</h3><div class="muted" style="font-size:11px;line-height:1.5">'+safe(p.description||'A Velora statement piece.')+'</div><div class="price">'+money(p.price_inr)+(p.compare_at_price_inr?'<span class="oldprice">'+money(p.compare_at_price_inr)+'</span>':'')+'</div><button class="add" data-add="'+safe(p.id)+'" '+(p.stock_quantity<=0?'disabled style="opacity:.55;cursor:not-allowed"':'')+'>'+(p.stock_quantity<=0?'Currently unavailable':'Add to bag')+'</button><button class="wishlist-toggle" data-wish="'+safe(p.id)+'" type="button">♡ Save to wishlist</button></div></article>').join(''):'<div class="empty">The collection is being prepared. Check back soon.</div>'}
 async function loadProducts(){if(!db){allProducts=[];renderProducts();return}try{const {data,error}=await db.from('products').select('id,name,description,category,price_inr,compare_at_price_inr,image_url,stock_quantity,is_featured').eq('is_active',true).order('is_featured',{ascending:false}).order('created_at',{ascending:false});if(error)throw error;allProducts=data||[];renderProducts();renderCart()}catch(e){console.error(e);allProducts=[];renderProducts();document.getElementById('productCount').textContent='Catalog unavailable';toast('Could not load products. Check Supabase configuration.')}}
 function saveCart(){localStorage.setItem('velora_cart',JSON.stringify(cart));renderCart()}
 function cartProducts(){return Object.entries(cart).map(([id,q])=>({product:allProducts.find(p=>p.id===id),quantity:q})).filter(x=>x.product)}
@@ -269,6 +285,7 @@ function openCart(){document.getElementById('cartOverlay').classList.add('open')
 document.querySelector('.category-showcase').addEventListener('click',e=>{const a=e.target.closest('[data-jump-category]');if(!a)return;activeCategory=a.dataset.jumpCategory;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category===activeCategory));});
 document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(!b)return;activeCategory=b.dataset.category;document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x===b));renderProducts()});
 document.getElementById('products').addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b)return;const p=allProducts.find(x=>x.id===b.dataset.add);if(!p||p.stock_quantity<1)return;cart[p.id]=Math.min((cart[p.id]||0)+1,p.stock_quantity);saveCart();logEvent('add_to_cart',p.id);toast('Added to your bag')});
+document.getElementById('products').addEventListener('click',async e=>{const b=e.target.closest('[data-wish]');if(!b)return;const {data:{user}}=await db.auth.getUser();if(!user){toast('Sign in to save your wishlist');showAccount();setAccountMode('signin');return}const id=b.dataset.wish;const {data:existing,error:readError}=await db.from('wishlist_items').select('id').eq('user_id',user.id).eq('product_id',id).maybeSingle();if(readError){toast('Wishlist unavailable');return}if(existing){const {error}=await db.from('wishlist_items').delete().eq('user_id',user.id).eq('product_id',id);if(error){toast('Could not update wishlist');return}b.classList.remove('saved');b.textContent='♡ Save to wishlist';toast('Removed from wishlist')}else{const {error}=await db.from('wishlist_items').insert({user_id:user.id,product_id:id});if(error){toast('Could not save wishlist');return}b.classList.add('saved');b.textContent='♥ Saved to wishlist';toast('Saved to wishlist')}});
 document.getElementById('cartItems').addEventListener('click',e=>{const b=e.target.closest('[data-qty]');if(!b)return;const id=b.dataset.qty,d=Number(b.dataset.delta),p=allProducts.find(x=>x.id===id);cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];else if(p)cart[id]=Math.min(cart[id],p.stock_quantity);saveCart()});
 document.getElementById('openCart').onclick=openCart;document.getElementById('cartFab').onclick=openCart;document.getElementById('closeCart').onclick=()=>document.getElementById('cartOverlay').classList.remove('open');document.getElementById('cartOverlay').addEventListener('click',e=>{if(e.target.id==='cartOverlay')e.currentTarget.classList.remove('open')});document.getElementById('checkoutBtn').onclick=()=>{if(cartProducts().reduce((n,x)=>n+x.product.price_inr*x.quantity,0)<500){toast('Minimum product subtotal is ₹500');return}document.getElementById('checkoutForm').style.display='block';document.getElementById('customerName').focus();};
 document.getElementById('paymentMethod').addEventListener('change',e=>{document.getElementById('paymentNote').textContent=e.target.value==='cod'?'COD: pay ₹70 advance online now; the remaining product subtotal is due at delivery.':'Prepaid: pay the full product subtotal online. Shipping is free.';document.getElementById('payNow').textContent=e.target.value==='cod'?'Pay ₹70 advance':'Pay full amount';});
@@ -301,18 +318,58 @@ function showAccount(){accountModal.classList.add('open');refreshAccount();if(db
 function closeAccount(){accountModal.classList.remove('open')}
 function setAccountMode(mode){accountMode=mode;document.getElementById('nameWrap').style.display=mode==='signup'?'block':'none';document.getElementById('accountTitle').textContent=mode==='signup'?'Create your account':'Welcome back';document.getElementById('accountIntro').textContent=mode==='signup'?'Create an account to view your profile and order history.':'Sign in to view your profile and track your orders.';document.getElementById('accountSubmit').textContent=mode==='signup'?'Create account':'Sign in';document.getElementById('accountSwitch').textContent=mode==='signup'?'Already have an account? Sign in':'New here? Create an account';document.getElementById('accountPassword').autocomplete=mode==='signup'?'new-password':'current-password';document.getElementById('accountForm').style.display='block';document.getElementById('profileArea').style.display='none';document.getElementById('accountMessage').textContent='';}
 function refreshAccount(){if(!db){document.getElementById('accountMessage').textContent='Account service is unavailable. Please try again later.';return}db.auth.getSession().then(({data,error})=>{if(error)document.getElementById('accountMessage').textContent=error.message;else if(data.session)renderAccountProfile(data.session.user);else setAccountMode('signin')})}
-async function renderAccountProfile(user){document.getElementById('accountTitle').textContent='Your profile';document.getElementById('accountIntro').textContent=(user.user_metadata?.full_name||user.user_metadata?.name||'Velora customer')+' · '+user.email;document.getElementById('accountForm').style.display='none';document.getElementById('accountSwitch').style.display='none';document.getElementById('profileArea').style.display='block';document.getElementById('accountMessage').textContent='';document.getElementById('accountOrders').innerHTML='<div class="account-empty">Loading your order history…</div>';
-const {data:orders,error}=await db.from('orders').select('id,order_number,subtotal_inr,payment_status,order_status,created_at').eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
-if(error){document.getElementById('accountOrders').innerHTML='<div class="account-empty">Your account is ready, but order history could not load yet. Orders placed before signing in may not appear here.</div>';return}
-const list=orders||[];document.getElementById('statOrders').textContent=list.length;document.getElementById('statDelivered').textContent=list.filter(o=>o.order_status==='delivered').length;document.getElementById('statSpend').textContent=money(list.reduce((s,o)=>s+Number(o.subtotal_inr||0),0));
-document.getElementById('accountOrders').innerHTML=list.length?list.map(o=>'<div class="account-order"><div><strong>'+safe(o.order_number)+'</strong><div style="color:#b9a995;margin-top:4px">'+new Date(o.created_at).toLocaleDateString('en-IN')+' · '+safe(o.order_status||'pending')+'</div></div><div style="text-align:right">'+money(o.subtotal_inr)+'<div style="color:#b9a995;margin-top:4px">'+safe(o.payment_status||'pending')+'</div></div></div>').join(''):'<div class="account-empty">No orders linked to this account yet. Orders placed while signed in will appear here.</div>';
+async function renderAccountProfile(user){
+ const name=user.user_metadata?.full_name||user.user_metadata?.name||user.email?.split('@')[0]||'Velora customer';
+ document.getElementById('accountTitle').textContent='My profile';
+ document.getElementById('accountIntro').textContent='Your Velora account · '+(user.email||'');
+ document.getElementById('accountForm').style.display='none';
+ document.getElementById('accountSwitch').style.display='none';
+ document.getElementById('profileArea').style.display='block';
+ document.getElementById('accountMessage').textContent='';
+ document.getElementById('profileEmail').value=user.email||'';
+ const {data:profile}=await db.from('profiles').select('display_name,email,phone,shipping_address').eq('id',user.id).maybeSingle();
+ document.getElementById('profileName').value=profile?.display_name||name;
+ document.getElementById('profilePhone').value=profile?.phone||'';
+ const a=profile?.shipping_address||{};
+ document.getElementById('profileAddress').value=[a.line1,a.line2,a.city,a.state,a.pincode].filter(Boolean).join(', ');
+ const {data:orders,error}=await db.from('orders').select('id,order_number,subtotal_inr,payment_status,order_status,created_at').eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
+ if(error){document.getElementById('accountOrders').innerHTML='<div class="account-empty">Order history could not load. New orders will appear here once linked to your account.</div>'}
+ else {
+  const list=orders||[];
+  document.getElementById('statOrders').textContent=list.length;
+  document.getElementById('statDelivered').textContent=list.filter(o=>o.order_status==='delivered').length;
+  document.getElementById('statSpend').textContent=money(list.reduce((s,o)=>s+Number(o.subtotal_inr||0),0));
+  document.getElementById('accountOrders').innerHTML=list.length?list.map(o=>'<div class="account-order"><div><strong>'+safe(o.order_number)+'</strong><div style="color:#b9a995;margin-top:4px">'+new Date(o.created_at).toLocaleDateString('en-IN')+' · '+safe(o.order_status||'pending')+'</div></div><div style="text-align:right">'+money(o.subtotal_inr)+'<div style="color:#b9a995;margin-top:4px">'+safe(o.payment_status||'pending')+'</div></div></div>').join(''):'<div class="account-empty">No orders linked to this account yet.</div>';
+ }
+ await loadWishlist(user);
 }
+async function loadWishlist(user){
+ const el=document.getElementById('accountWishlist');
+ el.innerHTML='<div class="account-empty">Loading wishlist…</div>';
+ const {data,error}=await db.from('wishlist_items').select('product_id,created_at,products(id,name,category,price_inr,image_url,stock_quantity,is_active)').eq('user_id',user.id).order('created_at',{ascending:false});
+ if(error){el.innerHTML='<div class="account-empty">Wishlist unavailable right now. Refresh and try again.</div>';return}
+ const items=(data||[]).filter(x=>x.products);
+ el.innerHTML=items.length?items.map(x=>{const p=x.products;return '<div class="wishlist-row"><div>'+(p.image_url?'<img src="'+safe(p.image_url)+'" alt="'+safe(p.name)+'">':'✧')+'</div><div><strong>'+safe(p.name)+'</strong><div class="muted" style="font-size:12px;margin-top:5px">'+money(p.price_inr)+'</div></div><button type="button" data-remove-wish="'+safe(p.id)+'">Remove</button></div>'}).join(''):'<div class="account-empty">Your wishlist is empty. Tap ♡ Save to wishlist on a product to keep it here.</div>';
+}
+document.getElementById('profileForm').addEventListener('submit',async e=>{
+ e.preventDefault();const {data:{user}}=await db.auth.getUser();if(!user)return;
+ const name=document.getElementById('profileName').value.trim(),phone=document.getElementById('profilePhone').value.trim(),raw=document.getElementById('profileAddress').value.trim();
+ if(phone&&!/^[6-9][0-9]{9}$/.test(phone)){document.getElementById('profileSaveMessage').textContent='Enter a valid 10-digit Indian mobile number.';return}
+ const parts=raw.split(',').map(x=>x.trim()).filter(Boolean);
+ const address={line1:parts[0]||'',line2:parts[1]||'',city:parts[2]||'',state:parts[3]||'',pincode:parts[4]||'',country:'India'};
+ const {error}=await db.from('profiles').upsert({id:user.id,display_name:name,email:user.email,phone:phone||null,shipping_address:address},{onConflict:'id'});
+ document.getElementById('profileSaveMessage').textContent=error?'Could not save profile: '+error.message:'Profile saved successfully.';
+});
+document.querySelector('.account-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-account-tab]');if(!b)return;document.querySelectorAll('.account-tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.account-view').forEach(x=>x.classList.toggle('active',x.id==='view-'+b.dataset.accountTab));});
+document.getElementById('accountWishlist').addEventListener('click',async e=>{const b=e.target.closest('[data-remove-wish]');if(!b)return;const {data:{user}}=await db.auth.getUser();if(!user)return;const {error}=await db.from('wishlist_items').delete().eq('user_id',user.id).eq('product_id',b.dataset.removeWish);if(error){toast('Could not remove item');return}await loadWishlist(user);toast('Removed from wishlist')});
+
 document.getElementById('accountClose').addEventListener('click',closeAccount);accountModal.addEventListener('click',e=>{if(e.target===accountModal)closeAccount()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAccount()});
 document.getElementById('accountSwitch').addEventListener('click',()=>setAccountMode(accountMode==='signup'?'signin':'signup'));
 document.getElementById('accountForm').addEventListener('submit',async e=>{e.preventDefault();if(!db){document.getElementById('accountMessage').textContent='Account service is unavailable. Please try again later.';return}const email=document.getElementById('accountEmail').value.trim(),password=document.getElementById('accountPassword').value,name=document.getElementById('accountName').value.trim(),submit=document.getElementById('accountSubmit');submit.disabled=true;document.getElementById('accountMessage').textContent='Please wait…';try{if(accountMode==='signup'){const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}});if(error)throw error;if(data.session){await renderAccountProfile(data.user)}else{document.getElementById('accountMessage').textContent='Account created. Check your email to confirm your address, then sign in.';setAccountMode('signin')}}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await renderAccountProfile(data.user)}}catch(err){document.getElementById('accountMessage').textContent=err.message||'Could not complete sign in.'}finally{submit.disabled=false}});
 document.getElementById('accountGoogle').addEventListener('click',async()=>{if(!db)return;const btn=document.getElementById('accountGoogle'),msg=document.getElementById('accountMessage');btn.disabled=true;msg.textContent='Connecting to Google…';try{const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://zenin22.github.io/velora-jewells-store/?account=profile'}});if(error)throw error}catch(err){msg.textContent=err.message||'Google sign-in could not start.';btn.disabled=false}});
 document.getElementById('accountSignOut').addEventListener('click',async()=>{await db.auth.signOut();setAccountMode('signin');document.getElementById('accountSwitch').style.display='inline-block';document.getElementById('accountMessage').textContent='You have signed out.'});
-db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';});
+db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';if(session&&new URLSearchParams(location.search).has('account'))showAccount();});
+if(new URLSearchParams(location.search).has('account')){setTimeout(showAccount,250);}
 \ndocument.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
 
@@ -332,7 +389,10 @@ db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBt
   <div id="accountMessage" class="account-message" role="status"></div>
   <div id="profileArea" style="display:none">
    <div class="profile-summary"><div class="profile-stat"><strong id="statOrders">0</strong><span>Orders</span></div><div class="profile-stat"><strong id="statDelivered">0</strong><span>Delivered</span></div><div class="profile-stat"><strong id="statSpend">₹0</strong><span>Order value</span></div></div>
-   <h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">Your orders</h3><div id="accountOrders"></div>
+   <div class="account-tabs"><button class="account-tab active" data-account-tab="details" type="button">My profile</button><button class="account-tab" data-account-tab="orders" type="button">My orders</button><button class="account-tab" data-account-tab="wishlist" type="button">Wishlist</button></div>
+   <section class="account-view active" id="view-details"><form class="profile-form" id="profileForm"><label for="profileName">Full name</label><input id="profileName" maxlength="120" required><label for="profileEmail">Email</label><input id="profileEmail" type="email" disabled><label for="profilePhone">Mobile number</label><input id="profilePhone" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number"><label for="profileAddress">Default delivery address</label><textarea id="profileAddress" rows="3" placeholder="House, street, area, city, state, PIN code"></textarea><button class="btn" type="submit" style="margin-top:14px">Save profile</button><div id="profileSaveMessage" class="account-message" role="status"></div></form></section>
+   <section class="account-view" id="view-orders"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">My orders</h3><div id="accountOrders"></div></section>
+   <section class="account-view" id="view-wishlist"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">Saved pieces</h3><div id="accountWishlist" class="wishlist-grid"></div></section>
    <div class="account-actions"><button class="btn secondary" id="accountSignOut" type="button">Sign out</button></div>
   </div>
  </div>
