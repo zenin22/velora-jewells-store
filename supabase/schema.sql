@@ -122,3 +122,6 @@ drop policy if exists "Admins can read order email notification status" on publi
 create policy "Admins can read order email notification status"
 on public.order_email_notifications for select to authenticated
 using ((select auth.jwt()->'app_metadata'->>'role') = 'admin');
+
+-- Index the wishlist product foreign key for efficient admin joins and deletion checks.
+create index if not exists wishlist_items_product_id_idx on public.wishlist_items(product_id);
