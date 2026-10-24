@@ -171,11 +171,22 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 .contact-float small{display:block;font-size:9px;letter-spacing:1.3px;color:#bfa77f;margin-bottom:2px}
 @keyframes veloraPulse{0%,100%{box-shadow:0 8px 28px #000b,0 0 0 0 #c5a57800}50%{box-shadow:0 8px 28px #000b,0 0 0 5px #c5a57813}}
 @media(max-width:520px){.contact-float{right:12px;bottom:14px;gap:8px}.contact-float a{min-height:42px;padding:0 12px;font-size:11px}.contact-float .contact-icon{width:25px;height:25px}}
+
+.account-nav{display:flex;align-items:center;gap:8px}
+.account-modal{position:fixed;inset:0;z-index:10020;background:#000c;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(8px)}.account-modal.open{display:flex}
+.account-panel{width:min(100%,470px);max-height:88vh;overflow:auto;background:linear-gradient(145deg,#120d0e,#050505);border:1px solid #8c704d;box-shadow:0 25px 80px #000;padding:25px;color:#f0e2d0;position:relative}
+.account-panel h2{font:500 34px 'Cormorant Garamond',serif;letter-spacing:2px;margin:0 0 8px}.account-panel p{color:#c3b3a0;font-size:12px;line-height:1.6}
+.account-panel label{display:block;color:#c8b28f;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px}
+.account-panel input{width:100%;background:#080707;color:#f3e6d5;border:1px solid #49382b;padding:12px;outline:none}.account-panel input:focus{border-color:#c5a578}
+.account-actions{display:flex;gap:8px;margin-top:17px;flex-wrap:wrap}.account-actions button{flex:1;min-width:100px}.account-close{position:absolute;right:12px;top:10px;background:none;border:0;color:#e6d3b5;font-size:24px}.account-message{color:#d8b985;font-size:12px;margin-top:10px;white-space:pre-wrap}.account-switch{border:0;background:none;color:#d8b985;text-decoration:underline;padding:8px 0;font-size:12px}
+.profile-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.profile-stat{border:1px solid #483629;padding:12px 8px;text-align:center;background:#0a0807}.profile-stat strong{display:block;font-size:23px;color:#d6b78b}.profile-stat span{font-size:9px;color:#bca991;text-transform:uppercase;letter-spacing:.8px}
+.account-order{padding:12px 0;border-top:1px solid #3c2d24;font-size:12px;display:flex;justify-content:space-between;gap:12px}.account-order strong{color:#e4c9a0}.account-empty{padding:16px 0;color:#bcae9c;font-size:12px}
+@media(max-width:520px){.nav{gap:8px}.account-nav{gap:4px}.account-nav .navbtn{padding:8px 7px;font-size:9px}.account-panel{padding:20px}}
 </style>
 </head>
 <body>
 <div class="topline">Dark details. Distinct identity. · Free shipping across India</div>
-<header class="nav"><a class="brand" href="#">VELORA <span>JEWELLS</span></a><nav class="navlinks"><a href="#shop">Shop all</a><a href="#story">Our story</a><a href="#help">Contact</a></nav><button class="navbtn" id="openCart">Bag <span id="navCount">0</span></button></header>
+<header class="nav"><a class="brand" href="#">VELORA <span>JEWELLS</span></a><nav class="navlinks"><a href="#shop">Shop all</a><a href="#story">Our story</a><a href="#help">Contact</a></nav><div class="account-nav"><button class="navbtn" id="accountBtn" type="button">Sign in</button><button class="navbtn" id="openCart">Bag <span id="navCount">0</span></button></div></header>
 <main>
 <section class="hero"><div><div class="eyebrow">Jewellery beyond ordinary</div><h1>Wear your<br><em>darker side.</em></h1><p>Gothic details, timeless symbols and statement pieces made for the ones who never blend in.</p><div class="actions"><a class="btn" href="#shop">Explore collection</a><a class="btn secondary" href="#story">Discover Velora</a></div></div><div class="hero-art" aria-label="Velora gothic jewellery aesthetic"><svg class="pendant-art" viewBox="0 0 300 360" role="img" aria-label="Velora gothic pendant illustration" xmlns="http://www.w3.org/2000/svg">
 <defs><linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0d9e6"/><stop offset=".28" stop-color="#b77b9b"/><stop offset=".52" stop-color="#f4d8e7"/><stop offset=".78" stop-color="#81516e"/><stop offset="1" stop-color="#e6bfd3"/></linearGradient><radialGradient id="stone"><stop offset="0" stop-color="#4e2c4c"/><stop offset=".75" stop-color="#1c101e"/><stop offset="1" stop-color="#08070a"/></radialGradient></defs>
@@ -283,10 +294,50 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
   const razorpay=new Razorpay(options);razorpay.on('payment.failed',r=>{err.textContent=r.error?.description||'Payment failed. No order is confirmed.';btn.disabled=false;btn.textContent=payment_method==='cod'?'Pay ₹70 advance':'Pay full amount'});razorpay.open();
  }catch(ex){err.textContent=ex.message;btn.disabled=false;btn.textContent=payment_method==='cod'?'Pay ₹70 advance':'Pay full amount'}
 });
-document.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
+
+let accountMode='signin';
+const accountModal=document.getElementById('accountModal');
+function showAccount(){accountModal.classList.add('open');refreshAccount();if(db)db.auth.getSession().then(({data})=>{if(data.session)renderAccountProfile(data.session.user)});}
+function closeAccount(){accountModal.classList.remove('open')}
+function setAccountMode(mode){accountMode=mode;document.getElementById('nameWrap').style.display=mode==='signup'?'block':'none';document.getElementById('accountTitle').textContent=mode==='signup'?'Create your account':'Welcome back';document.getElementById('accountIntro').textContent=mode==='signup'?'Create an account to view your profile and order history.':'Sign in to view your profile and track your orders.';document.getElementById('accountSubmit').textContent=mode==='signup'?'Create account':'Sign in';document.getElementById('accountSwitch').textContent=mode==='signup'?'Already have an account? Sign in':'New here? Create an account';document.getElementById('accountPassword').autocomplete=mode==='signup'?'new-password':'current-password';document.getElementById('accountForm').style.display='block';document.getElementById('profileArea').style.display='none';document.getElementById('accountMessage').textContent='';}
+function refreshAccount(){if(!db){document.getElementById('accountMessage').textContent='Account service is unavailable. Please try again later.';return}db.auth.getSession().then(({data,error})=>{if(error)document.getElementById('accountMessage').textContent=error.message;else if(data.session)renderAccountProfile(data.session.user);else setAccountMode('signin')})}
+async function renderAccountProfile(user){document.getElementById('accountTitle').textContent='Your profile';document.getElementById('accountIntro').textContent=(user.user_metadata?.full_name||user.user_metadata?.name||'Velora customer')+' · '+user.email;document.getElementById('accountForm').style.display='none';document.getElementById('accountSwitch').style.display='none';document.getElementById('profileArea').style.display='block';document.getElementById('accountMessage').textContent='';document.getElementById('accountOrders').innerHTML='<div class="account-empty">Loading your order history…</div>';
+const {data:orders,error}=await db.from('orders').select('id,order_number,subtotal_inr,payment_status,order_status,created_at').eq('user_id',user.id).order('created_at',{ascending:false}).limit(50);
+if(error){document.getElementById('accountOrders').innerHTML='<div class="account-empty">Your account is ready, but order history could not load yet. Orders placed before signing in may not appear here.</div>';return}
+const list=orders||[];document.getElementById('statOrders').textContent=list.length;document.getElementById('statDelivered').textContent=list.filter(o=>o.order_status==='delivered').length;document.getElementById('statSpend').textContent=money(list.reduce((s,o)=>s+Number(o.subtotal_inr||0),0));
+document.getElementById('accountOrders').innerHTML=list.length?list.map(o=>'<div class="account-order"><div><strong>'+safe(o.order_number)+'</strong><div style="color:#b9a995;margin-top:4px">'+new Date(o.created_at).toLocaleDateString('en-IN')+' · '+safe(o.order_status||'pending')+'</div></div><div style="text-align:right">'+money(o.subtotal_inr)+'<div style="color:#b9a995;margin-top:4px">'+safe(o.payment_status||'pending')+'</div></div></div>').join(''):'<div class="account-empty">No orders linked to this account yet. Orders placed while signed in will appear here.</div>';
+}
+document.getElementById('accountBtn').addEventListener('click',showAccount);document.getElementById('accountClose').addEventListener('click',closeAccount);accountModal.addEventListener('click',e=>{if(e.target===accountModal)closeAccount()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAccount()});
+document.getElementById('accountSwitch').addEventListener('click',()=>setAccountMode(accountMode==='signup'?'signin':'signup'));
+document.getElementById('accountForm').addEventListener('submit',async e=>{e.preventDefault();if(!db){document.getElementById('accountMessage').textContent='Account service is unavailable. Please try again later.';return}const email=document.getElementById('accountEmail').value.trim(),password=document.getElementById('accountPassword').value,name=document.getElementById('accountName').value.trim(),submit=document.getElementById('accountSubmit');submit.disabled=true;document.getElementById('accountMessage').textContent='Please wait…';try{if(accountMode==='signup'){const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}});if(error)throw error;if(data.session){await renderAccountProfile(data.user)}else{document.getElementById('accountMessage').textContent='Account created. Check your email to confirm your address, then sign in.';setAccountMode('signin')}}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await renderAccountProfile(data.user)}}catch(err){document.getElementById('accountMessage').textContent=err.message||'Could not complete sign in.'}finally{submit.disabled=false}});
+document.getElementById('accountGoogle').addEventListener('click',async()=>{if(!db)return;const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}});if(error)document.getElementById('accountMessage').textContent=error.message});
+document.getElementById('accountSignOut').addEventListener('click',async()=>{await db.auth.signOut();setAccountMode('signin');document.getElementById('accountSwitch').style.display='inline-block';document.getElementById('accountMessage').textContent='You have signed out.'});
+db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';});
+\ndocument.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
 
-<div class="contact-float" aria-label="Contact Velora Jewells">
+
+<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+ <div class="account-panel">
+  <button class="account-close" id="accountClose" aria-label="Close">×</button>
+  <div class="eyebrow">Your Velora account</div><h2 id="accountTitle">Welcome back</h2>
+  <p id="accountIntro">Sign in to view your profile and track your orders.</p>
+  <form id="accountForm">
+   <div id="nameWrap" style="display:none"><label for="accountName">Full name</label><input id="accountName" autocomplete="name" placeholder="Your name"></div>
+   <label for="accountEmail">Email address</label><input id="accountEmail" type="email" required autocomplete="email" placeholder="you@example.com">
+   <label for="accountPassword">Password</label><input id="accountPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
+   <div class="account-actions"><button class="btn" id="accountSubmit" type="submit">Sign in</button><button class="btn secondary" id="accountGoogle" type="button">Continue with Google</button></div>
+  </form>
+  <button class="account-switch" id="accountSwitch" type="button">New here? Create an account</button>
+  <div id="accountMessage" class="account-message" role="status"></div>
+  <div id="profileArea" style="display:none">
+   <div class="profile-summary"><div class="profile-stat"><strong id="statOrders">0</strong><span>Orders</span></div><div class="profile-stat"><strong id="statDelivered">0</strong><span>Delivered</span></div><div class="profile-stat"><strong id="statSpend">₹0</strong><span>Order value</span></div></div>
+   <h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">Your orders</h3><div id="accountOrders"></div>
+   <div class="account-actions"><button class="btn secondary" id="accountSignOut" type="button">Sign out</button></div>
+  </div>
+ </div>
+</div>
+\n<div class="contact-float" aria-label="Contact Velora Jewells">
  <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
   <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
  </a>
