@@ -331,6 +331,39 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 }
 @media(prefers-reduced-motion:reduce){.contact-float a{animation:none}}
 
+
+/* Gothic Queen hero image supplied by the store owner */
+.hero{
+  background-image:
+    linear-gradient(90deg,#030303 0%,#030303e8 20%,#030303b0 43%,#03030336 70%,#03030308 100%),
+    linear-gradient(0deg,#030303 0%,transparent 29%,#03030318 100%),
+    url('assets/velora-gothic-queen.avif') !important;
+  background-position:center,center,center top !important;
+  background-size:cover,cover,cover !important;
+  background-repeat:no-repeat !important;
+  grid-template-columns:minmax(0,1fr) !important;
+}
+.hero:before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(90deg,#030303 0%,#030303d9 20%,#0303038c 43%,#03030316 72%,transparent 100%);
+}
+.hero:after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(0deg,#030303 0%,transparent 34%,#0303030d 100%);
+}
+.hero>div:first-child{position:relative;z-index:2;width:100%;max-width:520px}
+.hero-art{display:none !important}
+@media(max-width:850px){
+ .hero{min-height:390px;background-position:center,center,68% top !important;padding:40px 6% !important}
+ .hero>div:first-child{max-width:100%}
+ .hero-art{display:none !important}
+}
+@media(max-width:420px){
+ .hero{min-height:375px;background-position:center,center,68% top !important;padding:36px 6% !important}
+ .hero h1{font-size:clamp(39px,11.5vw,47px) !important;line-height:.96}
+ .hero p{max-width:265px}
+}
+
 </style>
 </head>
 <body>
