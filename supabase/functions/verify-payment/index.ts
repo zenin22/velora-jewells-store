@@ -66,15 +66,27 @@ Deno.serve(async (req) => {
     });
     if (error) {
       console.error("Could not create paid order", error);
-      // If the payment succeeded but stock or validation changed, initiate a refund rather than leave the customer charged without an order.
+      // A parallel retry may have completed the same payment first. Return that order instead of refunding it.
+      const { data: existing } = await supabase.from("orders")
+        .select("id,order_number,subtotal_inr,paid_amount_inr,amount_due_inr,payment_method")
+        .eq("payment_reference", paymentId).maybeSingle();
+      if (existing) return reply({ success: true, order: existing });
+      // If stock or validation changed after payment, ask the gateway for a refund and verify its response.
       try {
-        await fetch("https://api.razorpay.com/v1/payments/" + encodeURIComponent(paymentId) + "/refund", {
+        const refundResponse = await fetch("https://api.razorpay.com/v1/payments/" + encodeURIComponent(paymentId) + "/refund", {
           method: "POST",
           headers: { "Authorization": "Basic " + btoa(keyId + ":" + keySecret), "Content-Type": "application/json" },
           body: JSON.stringify({ amount: payment.amount, notes: { reason: "Velora order could not be fulfilled", order_id: orderId } }),
         });
-      } catch (refundError) { console.error("Refund request failed; manual refund may be required", refundError); }
-      return reply({ error: "We could not confirm the order because stock or details changed. A refund request was initiated; keep payment ID " + paymentId + " for reference." }, 409);
+        if (!refundResponse.ok) {
+          console.error("Gateway refund request was rejected", await refundResponse.text());
+          return reply({ error: "We could not confirm the order and the automatic refund request failed. Contact support with payment ID " + paymentId + "." }, 409);
+        }
+      } catch (refundError) {
+        console.error("Refund request failed; manual refund may be required", refundError);
+        return reply({ error: "We could not confirm the order and could not request an automatic refund. Contact support with payment ID " + paymentId + "." }, 409);
+      }
+      return reply({ error: "We could not confirm the order because stock or details changed. A refund request was accepted; keep payment ID " + paymentId + " for reference." }, 409);
     }
     return reply({ success: true, order: data });
   } catch (error) {
