@@ -407,6 +407,6 @@ document.getElementById('accountGoogle').addEventListener('click',async()=>{if(!
 document.getElementById('accountSignOut').addEventListener('click',async()=>{await db.auth.signOut();setAccountMode('signin');document.getElementById('accountSwitch').style.display='inline-block';document.getElementById('accountMessage').textContent='You have signed out.'});
 db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';if(session&&new URLSearchParams(location.search).has('account'))showAccount();});
 if(new URLSearchParams(location.search).has('account')){setTimeout(showAccount,250);}
-\ndocument.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
+document.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
 </body></html>
