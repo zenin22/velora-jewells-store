@@ -28,6 +28,8 @@ Responsive gothic jewellery storefront and admin dashboard built with plain HTML
 - Server-side product price/stock validation, order snapshots, stock deduction and payment-event logging.
 - Admin-role protected product create/edit/publish and stock dashboard.
 - Admin order fulfilment dashboard with status, courier, AWB/tracking URL, gross-sales metrics and cancellation stock restoration.
+- Admin customer directory with saved profile/contact/address fields, order counts and wishlist counts; customer and activity CSV exports.
+- Admin wishlist overview, recent product/cart/checkout activity, and order-status/payment-event audit trail (all restricted to trusted admin role).
 - Store policies for shipping, returns/unboxing evidence, privacy, payments, terms and FAQs.
 
 ## Required owner setup before live sales
