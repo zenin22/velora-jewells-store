@@ -259,6 +259,41 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 <div class="toast" id="toast"></div>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script>
+
+
+
+<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
+ <div class="account-panel">
+  <button class="account-close" id="accountClose" aria-label="Close">×</button>
+  <div class="eyebrow">Your Velora account</div><h2 id="accountTitle">Welcome back</h2>
+  <p id="accountIntro">Sign in to view your profile and track your orders.</p>
+  <form id="accountForm">
+   <div id="nameWrap" style="display:none"><label for="accountName">Full name</label><input id="accountName" autocomplete="name" placeholder="Your name"></div>
+   <label for="accountEmail">Email address</label><input id="accountEmail" type="email" required autocomplete="email" placeholder="you@example.com">
+   <label for="accountPassword">Password</label><input id="accountPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
+   <div class="account-actions"><button class="btn" id="accountSubmit" type="submit">Sign in</button><button class="btn secondary" id="accountGoogle" type="button">Continue with Google</button></div>
+  </form>
+  <button class="account-switch" id="accountSwitch" type="button">New here? Create an account</button>
+  <div id="accountMessage" class="account-message" role="status"></div>
+  <div id="profileArea" style="display:none">
+   <div class="profile-summary"><div class="profile-stat"><strong id="statOrders">0</strong><span>Orders</span></div><div class="profile-stat"><strong id="statDelivered">0</strong><span>Delivered</span></div><div class="profile-stat"><strong id="statSpend">₹0</strong><span>Order value</span></div></div>
+   <div class="account-tabs"><button class="account-tab active" data-account-tab="details" type="button">My profile</button><button class="account-tab" data-account-tab="orders" type="button">My orders</button><button class="account-tab" data-account-tab="wishlist" type="button">Wishlist</button></div>
+   <section class="account-view active" id="view-details"><form class="profile-form" id="profileForm"><label for="profileName">Full name</label><input id="profileName" maxlength="120" required><label for="profileEmail">Email</label><input id="profileEmail" type="email" disabled><label for="profilePhone">Mobile number</label><input id="profilePhone" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number"><label for="profileAddress">Default delivery address</label><textarea id="profileAddress" rows="3" placeholder="House, street, area, city, state, PIN code"></textarea><button class="btn" type="submit" style="margin-top:14px">Save profile</button><div id="profileSaveMessage" class="account-message" role="status"></div></form></section>
+   <section class="account-view" id="view-orders"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">My orders</h3><div id="accountOrders"></div></section>
+   <section class="account-view" id="view-wishlist"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">Saved pieces</h3><div id="accountWishlist" class="wishlist-grid"></div></section>
+   <div class="account-actions"><button class="btn secondary" id="accountSignOut" type="button">Sign out</button></div>
+  </div>
+ </div>
+</div>
+\n<div class="contact-float" aria-label="Contact Velora Jewells">
+ <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
+  <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
+ </a>
+ <a href="mailto:velora1906@gmail.com?subject=Velora%20Jewells%20Enquiry" aria-label="Email Velora Jewells">
+  <span class="contact-icon" aria-hidden="true">✉</span><span><small>NEED HELP?</small>Email us</span>
+ </a>
+</div>
+
 <script>
 const SUPABASE_URL='https://arypnpohredubfaymuwm.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_aJZyDdFiMkOuhmIxEKIuuA_QALzapmi';
@@ -374,38 +409,4 @@ db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBt
 if(new URLSearchParams(location.search).has('account')){setTimeout(showAccount,250);}
 \ndocument.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
-
-
-<div class="account-modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
- <div class="account-panel">
-  <button class="account-close" id="accountClose" aria-label="Close">×</button>
-  <div class="eyebrow">Your Velora account</div><h2 id="accountTitle">Welcome back</h2>
-  <p id="accountIntro">Sign in to view your profile and track your orders.</p>
-  <form id="accountForm">
-   <div id="nameWrap" style="display:none"><label for="accountName">Full name</label><input id="accountName" autocomplete="name" placeholder="Your name"></div>
-   <label for="accountEmail">Email address</label><input id="accountEmail" type="email" required autocomplete="email" placeholder="you@example.com">
-   <label for="accountPassword">Password</label><input id="accountPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
-   <div class="account-actions"><button class="btn" id="accountSubmit" type="submit">Sign in</button><button class="btn secondary" id="accountGoogle" type="button">Continue with Google</button></div>
-  </form>
-  <button class="account-switch" id="accountSwitch" type="button">New here? Create an account</button>
-  <div id="accountMessage" class="account-message" role="status"></div>
-  <div id="profileArea" style="display:none">
-   <div class="profile-summary"><div class="profile-stat"><strong id="statOrders">0</strong><span>Orders</span></div><div class="profile-stat"><strong id="statDelivered">0</strong><span>Delivered</span></div><div class="profile-stat"><strong id="statSpend">₹0</strong><span>Order value</span></div></div>
-   <div class="account-tabs"><button class="account-tab active" data-account-tab="details" type="button">My profile</button><button class="account-tab" data-account-tab="orders" type="button">My orders</button><button class="account-tab" data-account-tab="wishlist" type="button">Wishlist</button></div>
-   <section class="account-view active" id="view-details"><form class="profile-form" id="profileForm"><label for="profileName">Full name</label><input id="profileName" maxlength="120" required><label for="profileEmail">Email</label><input id="profileEmail" type="email" disabled><label for="profilePhone">Mobile number</label><input id="profilePhone" inputmode="numeric" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit mobile number"><label for="profileAddress">Default delivery address</label><textarea id="profileAddress" rows="3" placeholder="House, street, area, city, state, PIN code"></textarea><button class="btn" type="submit" style="margin-top:14px">Save profile</button><div id="profileSaveMessage" class="account-message" role="status"></div></form></section>
-   <section class="account-view" id="view-orders"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">My orders</h3><div id="accountOrders"></div></section>
-   <section class="account-view" id="view-wishlist"><h3 style="font:500 23px 'Cormorant Garamond',serif;margin:14px 0 5px">Saved pieces</h3><div id="accountWishlist" class="wishlist-grid"></div></section>
-   <div class="account-actions"><button class="btn secondary" id="accountSignOut" type="button">Sign out</button></div>
-  </div>
- </div>
-</div>
-\n<div class="contact-float" aria-label="Contact Velora Jewells">
- <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
-  <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
- </a>
- <a href="mailto:velora1906@gmail.com?subject=Velora%20Jewells%20Enquiry" aria-label="Email Velora Jewells">
-  <span class="contact-icon" aria-hidden="true">✉</span><span><small>NEED HELP?</small>Email us</span>
- </a>
-</div>
-
 </body></html>
