@@ -10,7 +10,7 @@ Responsive gothic jewellery storefront and admin dashboard built with plain HTML
 - Secure checkout migration: `supabase/migrations/20261024_secure_checkout.sql`\n- Catalog RLS policy migration: `supabase/migrations/20261024_catalog_rls.sql`
 - Product image upload, sold-out status and profit tracking migration: `supabase/migrations/20261024_admin_inventory_profit_upload.sql`
 - Transactional order email notification status migration: `supabase/migrations/20261024_order_email_notifications.sql`
-- Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts` (verified order creation + idempotent photo-rich email notifications)
+- Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts`, `supabase/functions/send-order-notification/index.ts` (verified order creation + idempotent photo-rich email notifications and admin retry)
 - GitHub Pages workflow: `.github/workflows/pages.yml`
 
 ## Supabase project
