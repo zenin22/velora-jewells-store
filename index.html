@@ -364,6 +364,23 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
  .hero p{max-width:265px}
 }
 
+
+/* Prevent the hero artwork from being stretched beyond its source resolution */
+.hero{
+ background-size:cover,cover,auto 100% !important;
+ background-position:center,center,right center !important;
+ background-repeat:no-repeat !important;
+}
+@media(min-width:851px){
+ .hero{min-height:430px;background-size:cover,cover,auto 100% !important}
+}
+@media(max-width:850px){
+ .hero{background-size:cover,cover,auto 100% !important;background-position:center,center,right center !important}
+}
+@media(max-width:520px){
+ .hero{background-size:cover,cover,auto 100% !important;background-position:center,center,right center !important}
+}
+
 </style>
 </head>
 <body>
