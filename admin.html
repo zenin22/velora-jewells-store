@@ -28,7 +28,7 @@ function render(){
  $('statStock').textContent=products.reduce((n,p)=>n+Number(p.stock_quantity||0),0);
  $('statLow').textContent=products.filter(p=>Number(p.stock_quantity||0)<=3||p.is_sold_out).length;
  $('statOrders').textContent=orders.length;
- const activeOrders=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&o.payment_status!=='refunded');
+ const activeOrders=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&!['refunded','failed'].includes(o.payment_status));
  $('statRevenue').textContent='₹'+activeOrders.reduce((n,o)=>n+Number(o.subtotal_inr||0),0).toLocaleString('en-IN');
  $('statPending').textContent=orders.filter(o=>o.order_status==='pending').length;
  $('statConfirmed').textContent=orders.filter(o=>o.order_status==='confirmed').length;
@@ -47,7 +47,7 @@ function orderCostInfo(o){
  return {complete:true,revenue,cost,expenses,profit:revenue-cost-expenses};
 }
 function renderFinance(){
- const included=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&o.payment_status!=='refunded');
+ const included=orders.filter(o=>!['cancelled','returned'].includes(o.order_status)&&!['refunded','failed'].includes(o.payment_status));
  const delivered=included.filter(o=>o.order_status==='delivered');
  const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
  const known=included.map(o=>({o,c:orderCostInfo(o)})).filter(x=>x.c.complete);
