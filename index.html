@@ -81,7 +81,7 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
    try{
     const vr=await fetch(SUPABASE_URL+'/functions/v1/verify-payment',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({...payment,customer,items,payment_method})});
     const verified=await vr.json();if(!vr.ok)throw new Error(verified.error||'Payment verification failed.');
-    cart={};saveCart();document.getElementById('checkoutForm').style.display='none';document.getElementById('cartOverlay').classList.remove('open');
+    cart={};saveCart();await loadProducts();document.getElementById('checkoutForm').style.display='none';document.getElementById('cartOverlay').classList.remove('open');
     toast('Order confirmed: '+verified.order.order_number);
     alert('Thank you for shopping with Velora Jewells!\nOrder: '+verified.order.order_number+'\nProduct subtotal: '+money(verified.order.subtotal_inr)+'\nPaid now: '+money(verified.order.paid_amount_inr)+'\nDue at delivery: '+money(verified.order.amount_due_inr));
    }catch(ex){err.textContent=ex.message+' Do not submit another payment if money was deducted; contact support with the payment ID.';btn.disabled=true;btn.textContent='Payment review needed';}
