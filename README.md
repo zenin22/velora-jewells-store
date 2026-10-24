@@ -8,6 +8,7 @@ Responsive gothic jewellery storefront and admin dashboard built with plain HTML
 - Store information/policies: `policies.html`
 - Database reference schema: `supabase/schema.sql`
 - Secure checkout migration: `supabase/migrations/20261024_secure_checkout.sql`\n- Catalog RLS policy migration: `supabase/migrations/20261024_catalog_rls.sql`
+- Product image upload, sold-out status and profit tracking migration: `supabase/migrations/20261024_admin_inventory_profit_upload.sql`
 - Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts`
 - GitHub Pages workflow: `.github/workflows/pages.yml`
 
