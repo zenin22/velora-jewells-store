@@ -1,31 +1,47 @@
 # Velora Jewells Store
 
-Dark gothic jewellery storefront + Supabase-backed product inventory admin.
+Responsive gothic jewellery storefront and admin dashboard built with plain HTML/CSS/JS, Supabase and Razorpay.
 
-## Current deployment setup
-- Supabase project: `arypnpohredubfaymuwm`
+## Repository
+- Storefront: `index.html`
+- Admin: `admin.html`
+- Store information/policies: `policies.html`
+- Database reference schema: `supabase/schema.sql`
+- Secure checkout migration: `supabase/migrations/20261024_secure_checkout.sql`
+- Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts`
+- GitHub Pages workflow: `.github/workflows/pages.yml`
+
+## Supabase project
+- Project ref: `arypnpohredubfaymuwm`
 - Region: Mumbai (`ap-south-1`)
-- Public project URL: `https://arypnpohredubfaymuwm.supabase.co`
-- Frontend uses the Supabase publishable key only. Never put a service-role/secret key in browser code.
+- URL: `https://arypnpohredubfaymuwm.supabase.co`
+- Frontend uses a public publishable key only. Never put a service-role key or Razorpay secret in browser code or GitHub.
 
-## Files
-- `index.html`: responsive storefront, live active-product catalog, category filters, local cart and ₹500 product-subtotal threshold.
-- `admin.html`: Supabase email/password + Google OAuth sign-in UI, server-verified admin-role check, product create/edit/publish and stock dashboard.
-- `supabase/schema.sql`: schema/RLS reference (same core schema applied to the live project).
+## Features currently implemented
+- Dark gothic responsive storefront and category filters.
+- Live catalog reads only published/active products.
+- Shopping bag stored in the customer's browser; stock limits are respected in the UI.
+- ₹500 minimum product subtotal and free-shipping display.
+- Checkout form for Indian delivery details.
+- Razorpay server-side order creation and signature/payment-status verification.
+- Prepaid full payment and COD ₹70 online advance; remaining product subtotal is shown as due at delivery.
+- Server-side product price/stock validation, order snapshots, stock deduction and payment-event logging.
+- Admin-role protected product create/edit/publish and stock dashboard.
+- Admin order fulfilment dashboard with status, courier, AWB/tracking URL, gross-sales metrics and cancellation stock restoration.
+- Store policies for shipping, returns/unboxing evidence, privacy, payments, terms and FAQs.
 
-## Important setup still required before taking real orders
-1. In Supabase Auth settings, configure the site's allowed redirect URLs and configure Google OAuth credentials if Google login is wanted.
-2. Provision the store owner's admin role using a trusted server-side method / Supabase Dashboard user app_metadata. The role must be `app_metadata.role = admin`; do not use user-editable metadata. The admin page intentionally rejects regular users.
-3. Deploy a server-side order-creation endpoint that validates product IDs/prices/stock and the minimum ₹500 subtotal, calculates the ₹70 COD advance rule if retained, creates orders transactionally, and verifies payment provider webhooks/signatures idempotently. Do not trust a browser redirect as proof of payment.
-4. Add a payment provider (e.g. Razorpay) only after account/KYC and webhook secrets are configured server-side. No live payment collection is enabled in this repository yet.
-5. Set shipping provider credentials server-side before automating AWB/tracking.
-6. Add actual product photos and inventory from the admin dashboard after admin access is provisioned.
+## Required owner setup before live sales
+1. **Set Razorpay secrets in Supabase**: open Supabase Dashboard → Edge Functions → Secrets and add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` from the verified Razorpay account. Never share the secret in chat, frontend code or GitHub. Ensure the Razorpay account is activated and payment capture is enabled.
+2. **Grant the store owner admin access**: create/sign in the owner's account in Supabase Auth first. Then grant the trusted owner the server-managed `app_metadata.role = admin` claim from a trusted admin process. The admin page intentionally rejects normal accounts. Ask the project owner to provision the role; do not use user-editable metadata.
+3. **Configure Google OAuth (optional)**: Supabase Authentication → Providers → Google, set the Google client credentials and add the exact deployed admin URL to the allowed redirect URLs. Password sign-in is also supported.
+4. **Enable GitHub Pages**: in the repository open Settings → Pages and select **GitHub Actions** as the build/deploy source. Then open Actions and confirm the Pages workflow completes. The workflow file being present does not itself prove the public site is deployed.
+5. **Upload actual inventory**: after admin access is provisioned, add real product names, correct prices, actual stock counts and HTTPS product-image URLs. The database currently starts empty; no fake products or stock are seeded.
+6. **Before launch**: run a low-value test payment, confirm both prepaid and ₹70 COD-advance flows, verify order confirmation and stock changes, test cancellation/stock restoration, and confirm a refund path with Razorpay support. Do not advertise checkout as live until this passes.
 
-## Security notes
-- RLS is enabled on all exposed application tables.
-- Public users can read only active products and can record minimal cart events.
-- Order/customer/payment tables are not publicly readable/writable.
-- Admin access relies on the trusted JWT `app_metadata.role` claim.
-- Publishable/anon keys are intended for frontend use; secret/service-role keys are not.
-- The admin dashboard does not yet provide order management because safe order/payment endpoints are not configured.
-- This is a starter implementation, not yet a live-payment production checkout.
+## Important implementation notes
+- Payment confirmation is server-verified using Razorpay's API and checkout signature. A browser redirect alone is never proof of payment.
+- If order validation fails after a captured payment, the verification function attempts a refund and checks the gateway response. If the refund request fails, the customer is told to contact support with the payment ID.
+- Order/payment/customer tables are not publicly readable or writable; RLS is enabled. Only the trusted service-role function creates paid orders.
+- Admin access checks the server-managed JWT claim `app_metadata.role = admin`; never expose the Supabase service-role key.
+- Cancelled orders restore stock; shipped/delivered/returned orders cannot be cancelled through the dashboard. Returned stock should be inspected before manually restocking.
+- No product images, inventory, Google OAuth credentials, Razorpay secrets or owner admin identity are invented or included in the repo.
