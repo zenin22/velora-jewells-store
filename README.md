@@ -9,7 +9,8 @@ Responsive gothic jewellery storefront and admin dashboard built with plain HTML
 - Database reference schema: `supabase/schema.sql`
 - Secure checkout migration: `supabase/migrations/20261024_secure_checkout.sql`\n- Catalog RLS policy migration: `supabase/migrations/20261024_catalog_rls.sql`
 - Product image upload, sold-out status and profit tracking migration: `supabase/migrations/20261024_admin_inventory_profit_upload.sql`
-- Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts`
+- Transactional order email notification status migration: `supabase/migrations/20261024_order_email_notifications.sql`
+- Edge Function source: `supabase/functions/create-checkout/index.ts`, `supabase/functions/verify-payment/index.ts` (verified order creation + idempotent photo-rich email notifications)
 - GitHub Pages workflow: `.github/workflows/pages.yml`
 
 ## Supabase project
@@ -35,7 +36,14 @@ Responsive gothic jewellery storefront and admin dashboard built with plain HTML
 - Admin order counts for pending, confirmed, packed/shipped and delivered; order cards show item quantities, selling costs, purchase costs and item margin.
 - Admin customer directory with saved profile/contact/address fields, order counts and wishlist counts; customer and activity CSV exports.
 - Admin wishlist overview, recent product/cart/checkout activity, and order-status/payment-event audit trail (all restricted to trusted admin role).
+- Branded transactional new-order email sent to authorised store-admin accounts after verified order creation, including product photos, quantity, customer/contact/address, payment and order totals; email attempts are idempotency-protected and logged privately.
 - Store policies for shipping, returns/unboxing evidence, privacy, payments, terms and FAQs.
+
+## Order email notifications
+- The `verify-payment` Edge Function attempts a single idempotent transactional alert after the order is securely created. The email contains saved product image URLs, quantity, item totals, customer/contact/address, payment method, paid amount and due-at-delivery amount. The notification is sent to Supabase Auth users whose server-managed `app_metadata.role` is `admin`.
+- Add `RESEND_API_KEY` to Supabase Dashboard → Project Settings / Edge Functions → Secrets. Use a sending-only key restricted to the verified `velorajewells.in` domain. Do not put provider keys in frontend code or GitHub.
+- Set `ORDER_EMAIL_FROM` to `Velora Jewells <orders@velorajewells.in>` only after the sender domain is verified in Resend. Add the DKIM TXT, SPF MX/TXT and rsend CNAME records Resend lists for `velorajewells.in` at the authoritative DNS provider and then run domain verification. Do not remove any existing mail records that are used by your current email provider.
+- If the email provider rejects a notification, order confirmation still succeeds; the attempt is logged in `public.order_email_notifications`. Check the status/error before retrying.
 
 ## Required owner setup before live sales
 1. **Set Razorpay secrets in Supabase**: open Supabase Dashboard → Edge Functions → Secrets and add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` from the verified Razorpay account. Never share the secret in chat, frontend code or GitHub. Ensure the Razorpay account is activated and payment capture is enabled.
