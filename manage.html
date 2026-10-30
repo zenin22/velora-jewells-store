@@ -249,7 +249,21 @@ function renderOrders(){
 }
 async function sessionCheck(){if(!db){status('Supabase client failed to load. Check the CDN and project settings.','bad');return}const {data:{session}}=await db.auth.getSession();if(!session){$('loginPanel').classList.remove('hidden');$('appPanel').classList.add('hidden');status('Not signed in.','');return}if(!admin(session.user)){$('loginPanel').classList.remove('hidden');$('appPanel').classList.add('hidden');status('Access denied: this account does not have the server-managed admin role. Ask the project owner to grant it through a trusted server-side process.','bad');return}$('loginPanel').classList.add('hidden');$('appPanel').classList.remove('hidden');status('Admin access verified for '+(session.user.email||'your account')+'.','good');await load();applyPageView();if(location.hash){const target=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(target)setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'start'}),100)}}
 $('loginForm').addEventListener('submit',async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){status(error.message,'bad');return}await sessionCheck()});
-$('googleBtn').onclick=async()=>{const {error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.href.split('?')[0]}});if(error)status(error.message,'bad')};
+$('googleBtn').onclick=async()=>{
+ const button=$('googleBtn');button.disabled=true;button.textContent='Connecting to Google…';status('Starting secure Google sign-in…');
+ try{
+  if(!db)throw new Error('Supabase client did not load. Refresh and try again.');
+  const redirectTo='https://zenin22.github.io/velora-jewells-store/manage.html';
+  const {data,error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo,queryParams:{prompt:'select_account'}}});
+  if(error)throw error;
+  if(!data?.url)throw new Error('Supabase did not return a Google sign-in URL. Check that Google provider is enabled in Supabase Auth.');
+  window.location.assign(data.url);
+ }catch(error){
+  const message=error?.message||'Google sign-in could not start.';
+  status(message.includes('provider is not enabled')||message.includes('Unsupported provider')?'Google sign-in is not enabled in Supabase Auth yet. Enable Google and add its OAuth Client ID and Client Secret.':message,'bad');
+  button.disabled=false;button.textContent='Continue with Google';
+ }
+};
 $('imageFile').addEventListener('change',()=>{const file=$('imageFile').files?.[0];if(!file){if($('image').value)showImagePreview($('image').value);else showImagePreview('');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)){status('Please upload a JPG, PNG or WebP image.','bad');$('imageFile').value='';return}if(file.size>5*1024*1024){status('Image must be 5 MB or smaller.','bad');$('imageFile').value='';return}showImagePreview(URL.createObjectURL(file),'Selected image: '+file.name)}); 
 $('image').addEventListener('input',()=>{if(!$('imageFile').files?.length)showImagePreview($('image').value,'Image URL preview')});
 $('productForm').addEventListener('submit',async e=>{
