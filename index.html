@@ -540,7 +540,7 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
   </div>
  </div>
 </div>
-\n<div class="contact-float" aria-label="Contact Velora Jewells">
+<div class="contact-float" aria-label="Contact Velora Jewells">
  <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
   <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
  </a>
@@ -574,7 +574,7 @@ async function applyStoreAssets(){
   document.querySelectorAll('[data-site-asset]').forEach(img=>{const url=assets[img.dataset.siteAsset];if(url)img.src=url});
  }catch(err){console.warn('Store appearance could not be loaded',err)}
 }
-\nfunction logEvent(type,pid){try{if(db)db.from('cart_events').insert({session_id:getSessionId(),product_id:pid||null,event_type:type,quantity:1}).then(()=>{}).catch(()=>{})}catch{}}
+function logEvent(type,pid){try{if(db)db.from('cart_events').insert({session_id:getSessionId(),product_id:pid||null,event_type:type,quantity:1}).then(()=>{}).catch(()=>{})}catch{}}
 function getSessionId(){let s=localStorage.getItem('velora_session');if(!s){s=crypto.randomUUID();localStorage.setItem('velora_session',s)}return s}
 function iconFor(p){return ({Pendants:'✧',Chains:'⌁',Bracelets:'◈',Rings:'◉'})[p.category]||'✦'}
 function renderProducts(){const source=activeProductView==='new'?allProducts.slice().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0)).slice(0,8):allProducts;const items=source.filter(p=>activeCategory==='All'||p.category===activeCategory);document.getElementById('productCount').textContent=activeProductView==='new'?items.length+' new arrivals':items.length+' pieces';document.getElementById('shopEyebrow').textContent=activeProductView==='new'?'Fresh from Velora':'The collection';document.getElementById('shopHeading').textContent=activeProductView==='new'?'New Arrivals':'Find your signature';document.getElementById('products').innerHTML=items.length?items.map(p=>{const soldOut=Boolean(p.is_sold_out)||Number(p.stock_quantity)<=0;const hasDiscount=Number(p.compare_at_price_inr)>Number(p.price_inr);const discountPct=hasDiscount?Math.round((1-Number(p.price_inr)/Number(p.compare_at_price_inr))*100):0;return '<article class="product"><div class="product-img">'+(p.image_url?'<img src="'+safe(p.image_url)+'" alt="'+safe(p.name)+'" loading="lazy" onerror="this.remove()">':'<span>'+iconFor(p)+'</span>')+(soldOut?'<span class="stock-badge">Sold Out</span>':hasDiscount?'<span class="sale-badge">'+discountPct+'% OFF</span>':'')+'</div><div class="product-info"><div class="category">'+safe(p.category)+'</div><h3>'+safe(p.name)+'</h3><div class="muted" style="font-size:11px;line-height:1.5">'+safe(p.description||'A Velora statement piece.')+'</div><div class="price">'+money(p.price_inr)+(hasDiscount?'<span class="oldprice">'+money(p.compare_at_price_inr)+'</span>':'')+'</div><button class="add" data-add="'+safe(p.id)+'" '+(soldOut?'disabled style="opacity:.55;cursor:not-allowed"':'')+'>'+(soldOut?'Sold Out':'Add to bag')+'</button><button class="wishlist-toggle" data-wish="'+safe(p.id)+'" type="button">♡ Save to wishlist</button></div></article>'}).join(''):'<div class="empty">The collection is being prepared. Check back soon.</div>'}
