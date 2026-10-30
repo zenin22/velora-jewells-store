@@ -47,6 +47,29 @@
 <div class="actions"><button class="btn secondary" id="logoutBtn">Sign out</button></div></section>
 </div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js"></script><script>
 const SUPABASE_URL='https://arypnpohredubfaymuwm.supabase.co';const SUPABASE_PUBLISHABLE_KEY='sb_publishable_aJZyDdFiMkOuhmIxEKIuuA_QALzapmi';const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);const $=id=>document.getElementById(id);let products=[],orders=[],customers=[],wishlists=[],activityEvents=[],statusHistory=[],paymentEvents=[],orderEmailNotifications=[],productCosts=new Map(),siteAssets=new Map();
+// Delegated appearance save handler is registered before dashboard initialization.
+document.addEventListener('click',async event=>{
+ const btn=event.target.closest('[data-save-asset]');if(!btn)return;
+ event.preventDefault();
+ const key=btn.dataset.saveAsset,file=document.getElementById('asset-'+key)?.files?.[0],message=document.getElementById('appearance-status');
+ if(!file){message.textContent='Please choose an image first.';return}
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){message.textContent='Choose JPG, PNG or WebP up to 5 MB.';return}
+ if(!db){message.textContent='Database connection unavailable. Refresh and sign in again.';return}
+ btn.disabled=true;message.textContent='Uploading '+key+' image…';
+ try{
+  const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp';
+  const path='site-assets/'+key+'/'+Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+  const up=await db.storage.from('velora-product-images').upload(path,file,{cacheControl:'3600',contentType:file.type,upsert:false});
+  if(up.error)throw up.error;
+  const url=db.storage.from('velora-product-images').getPublicUrl(path).data.publicUrl;
+  const auth=await db.auth.getUser();if(auth.error)throw auth.error;
+  const saved=await db.from('site_assets').upsert({asset_key:key,public_url:url,updated_at:new Date().toISOString(),updated_by:auth.data.user?.id},{onConflict:'asset_key'});
+  if(saved.error)throw saved.error;
+  siteAssets.set(key,url);message.textContent='Saved '+key+' image. Reload the storefront to see it.';
+ }catch(error){message.textContent='Could not save image: '+(error.message||'Unknown error')}
+ finally{btn.disabled=false}
+});
+
 function status(text,kind=''){ $('status').textContent=text;$('status').className='msg '+kind}
 function admin(user){return user?.app_metadata?.role==='admin'}
 function applyPageView(){
@@ -359,23 +382,6 @@ $('financeProducts').addEventListener('click',async e=>{
  finally{b.disabled=false}
 });
 
-document.querySelectorAll('[data-save-asset]').forEach(btn=>btn.addEventListener('click',async()=>{
- const key=btn.dataset.saveAsset,file=$('asset-'+key)?.files?.[0];
- if(!file){$('appearance-status').textContent='Please choose an image first.';return}
- if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){$('appearance-status').textContent='Choose JPG, PNG or WebP up to 5 MB.';return}
- btn.disabled=true;$('appearance-status').textContent='Uploading '+key+' image…';
- try{
-  const ext=file.type==='image/jpeg'?'jpg':file.type==='image/png'?'png':'webp';
-  const path='site-assets/'+key+'/'+Date.now()+'-'+crypto.randomUUID()+'.'+ext;
-  const up=await db.storage.from('velora-product-images').upload(path,file,{cacheControl:'3600',contentType:file.type,upsert:false});
-  if(up.error)throw up.error;
-  const url=db.storage.from('velora-product-images').getPublicUrl(path).data.publicUrl;
-  const saved=await db.from('site_assets').upsert({asset_key:key,public_url:url,updated_at:new Date().toISOString(),updated_by:(await db.auth.getUser()).data.user?.id},{onConflict:'asset_key'});
-  if(saved.error)throw saved.error;
-  siteAssets.set(key,url);$('appearance-status').textContent='Saved '+key+' image. It is now live on the storefront.'; 
- }catch(err){$('appearance-status').textContent='Could not save image: '+(err.message||'Unknown error')}
- finally{btn.disabled=false}
-}));
 ['hero','necklaces','earrings','rings','bracelets','pendants','sets'].forEach(key=>{
  const input=$('asset-'+key);if(!input)return;
  input.addEventListener('change',()=>{const f=input.files?.[0],img=$('preview-'+key);if(!f){img.classList.add('hidden');return}img.src=URL.createObjectURL(f);img.classList.remove('hidden')});
