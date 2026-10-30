@@ -25,6 +25,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Assemble high-quality hero image
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d ".github/hero-source" ]; then
+            count="$(find .github/hero-source -maxdepth 1 -type f -name 'part-*.txt' | wc -l)"
+            if [ "$count" -eq 12 ]; then
+              cat .github/hero-source/part-*.txt | base64 --decode > assets/velora-gothic-queen-hires.avif
+              test -s assets/velora-gothic-queen-hires.avif
+              echo "Built high-quality hero image ($(wc -c < assets/velora-gothic-queen-hires.avif) bytes)."
+              rm -rf .github/hero-source
+            fi
+          fi
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site
