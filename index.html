@@ -432,6 +432,27 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
  .hero h1{font-size:clamp(42px,12vw,55px)!important;line-height:.96!important}
 }
 
+
+/* Final desktop header alignment + reliable email handoff */
+@media (min-width:851px){
+ .nav{display:grid!important;grid-template-columns:minmax(250px,1fr) auto minmax(190px,1fr)!important;grid-template-rows:1fr!important;align-items:center!important;justify-content:initial!important;height:76px!important;min-height:76px!important;padding:0 clamp(28px,5.5vw,100px)!important;column-gap:clamp(20px,3vw,48px)!important}
+ .brand{grid-column:1;grid-row:1;justify-self:start;align-self:center;line-height:1!important;white-space:nowrap}
+ .navlinks{grid-column:2;grid-row:1;justify-self:center;align-self:center;display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(22px,2.3vw,38px)!important;height:100%!important;line-height:1!important;white-space:nowrap!important}
+ .navlinks>a{display:inline-flex!important;align-items:center!important;justify-content:center!important;height:100%!important;line-height:1!important;padding:0!important;margin:0!important;white-space:nowrap!important;transform:none!important}
+ .account-nav{grid-column:3;grid-row:1;justify-self:end;align-self:center;display:flex!important;align-items:center!important;gap:16px!important;white-space:nowrap}
+ .account-nav .navbtn{display:inline-flex;align-items:center;justify-content:center;line-height:1!important;margin:0!important}
+}
+@media(max-width:850px){
+ .nav{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;height:auto!important;min-height:0!important;gap:0 10px!important;padding:9px 4%!important}
+ .brand{display:inline-flex!important;align-items:center!important;line-height:1!important}
+ .account-nav{display:flex!important;align-items:center!important;gap:5px!important;margin-left:auto!important}
+ .navlinks{display:flex!important;position:static!important;order:3!important;flex:0 0 100%!important;width:100%!important;max-width:100%!important;min-width:0!important;align-items:center!important;justify-content:center!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:clamp(12px,3vw,24px)!important;height:34px!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap!important;line-height:1!important;padding:5px 0 0!important;margin:4px 0 0!important;scrollbar-width:none!important}
+ .navlinks::-webkit-scrollbar{display:none!important}
+ .navlinks>a{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;height:28px!important;line-height:1!important;padding:0!important;white-space:nowrap!important}
+}
+.contact-float a{align-items:center!important;line-height:1.15!important}
+.contact-float a span:last-child{display:block!important;line-height:1.15!important}
+
 </style>
 </head>
 <body>
@@ -523,7 +544,7 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
  <a class="wa" href="https://wa.me/918986581105?text=Hi%20Velora%20Jewells%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noopener noreferrer" aria-label="Chat with Velora Jewells on WhatsApp">
   <span class="contact-icon" aria-hidden="true">✆</span><span><small>QUICK SUPPORT</small>WhatsApp us</span>
  </a>
- <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=velora1906%40gmail.com&amp;su=Velora%20Jewells%20Enquiry&amp;body=Hello%20Velora%20Jewells%2C" target="_blank" rel="noopener noreferrer" aria-label="Email Velora Jewells via Gmail">
+ <a href="mailto:velora1906@gmail.com?subject=Velora%20Jewells%20Enquiry&amp;body=Hello%20Velora%20Jewells%2C" aria-label="Email Velora Jewells">
   <span class="contact-icon" aria-hidden="true">✉</span><span><small>NEED HELP?</small>Email us</span>
  </a>
 </div>
