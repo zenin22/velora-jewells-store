@@ -453,6 +453,35 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
 .contact-float a{align-items:center!important;line-height:1.15!important}
 .contact-float a span:last-child{display:block!important;line-height:1.15!important}
 
+
+/* Sharp hero artwork: use the crisp inline pendant illustration instead of the
+   duplicated, soft photographic background that made the hero look blurry. */
+.hero{
+ background:
+  radial-gradient(ellipse at 76% 48%,#38202b 0%,#160d12 34%,transparent 63%),
+  linear-gradient(110deg,#050405 0%,#0b0709 54%,#170d12 100%) !important;
+ background-image:
+  radial-gradient(ellipse at 76% 48%,#38202b 0%,#160d12 34%,transparent 63%),
+  linear-gradient(110deg,#050405 0%,#0b0709 54%,#170d12 100%) !important;
+}
+.hero:after{background:linear-gradient(0deg,#050405 0%,transparent 30%,#05040522 100%) !important}
+.hero-art{
+ background:
+  radial-gradient(ellipse at 50% 42%,#3a202c 0%,#1b1017 43%,#090708 78%) !important;
+ border:1px solid #9b784f99 !important;
+ box-shadow:0 25px 70px #000b, inset 0 0 80px #c7a4770d !important;
+ transform:none !important;
+}
+.hero-art:hover{transform:translateY(-4px) !important}
+.hero-art:before{width:310px;height:390px;border-color:#c7a47745 !important;transform:rotate(35deg) scaleX(.55)}
+.hero-art:after{width:245px;height:320px;border-color:#d9c09a45 !important;transform:rotate(-35deg) scaleX(.62)}
+.hero-art .pendant-art{
+ width:min(330px,78%);max-height:90%;filter:drop-shadow(0 18px 30px #000) drop-shadow(0 0 18px #c7a47735);
+ opacity:1;animation:gothicFloat 6s ease-in-out infinite;
+}
+.hero-art .art-caption{background:#090607b8;border:1px solid #8b6a4b66;padding:10px 15px;backdrop-filter:blur(8px)}
+@media(max-width:850px){.hero{background-position:center !important}.hero-art{transform:none !important}.hero-art:hover{transform:translateY(-3px) !important}}
+
 </style>
 <style>.product{cursor:pointer}.product-detail-overlay{position:fixed;inset:0;background:#000d;z-index:80;display:none;align-items:center;justify-content:center;padding:18px}.product-detail-overlay.open{display:flex}.product-detail-panel{width:min(900px,100%);max-height:90vh;overflow:auto;background:#0c0909;border:1px solid #8a6c4c;display:grid;grid-template-columns:1fr 1fr;position:relative;box-shadow:0 25px 90px #000}.product-detail-close{position:absolute;right:14px;top:10px;z-index:2;background:#090707dd;border:1px solid #8a6c4c;color:#f4e8d8;font-size:28px;width:42px;height:42px}.product-detail-image{min-height:430px;background:#140e0d;display:grid;place-items:center}.product-detail-image img{width:100%;height:100%;max-height:600px;object-fit:contain}.product-detail-copy{padding:55px 35px;align-self:center}.product-detail-copy h2{font:500 42px 'Cormorant Garamond',serif;margin:12px 0}.product-detail-copy p{color:#c3b5a7;line-height:1.8}.detail-stock{color:#c7a477;margin:16px 0 24px;font-size:12px}@media(max-width:650px){.product-detail-panel{grid-template-columns:1fr}.product-detail-image{min-height:260px;height:38vh}.product-detail-copy{padding:25px}.product-detail-copy h2{font-size:32px}}</style></head>
 <body>
@@ -484,7 +513,7 @@ body{background:#030303;color:#f1e7da;font-family:'Cormorant Garamond',Georgia,s
  </div>
 </section>
 <section class="category-showcase" id="collections" aria-label="Shop by category"><div class="collections-intro"><span>Curated for your style</span><strong>Explore Collections</strong><small>Find your signature piece.</small></div>
-<a href="pendants.html"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=700&q=95" alt="Pendants"><span>Pendants</span></a> <a href="#shop" data-jump-category="Couple Jewellery"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=700&q=95" alt="Couple jewellery"><span>Couple Jewellery</span></a>
+<a href="pendants.html"><img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=700&q=95" alt="Pendants"><span>Pendants</span></a> <a href="couple-jewellery.html"><img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=95" alt="Couple jewellery"><span>Couple Jewellery</span></a>
 </section>
 <section class="section" id="shop"><div class="sectionhead"><div><div class="eyebrow" id="shopEyebrow">The collection</div><h2 id="shopHeading">Find your signature</h2></div><div class="muted" id="productCount">Loading pieces…</div></div><div class="filters" id="filters"><button class="filter active" data-category="All">All pieces</button><button class="filter" data-category="Pendants">Pendants</button><button class="filter" data-category="Chains">Chains</button><button class="filter" data-category="Bracelets">Bracelets</button><button class="filter" data-category="Rings">Rings</button><button class="filter" data-category="Earrings">Earrings</button><button class="filter" data-category="Couple Jewellery">Couple Jewellery</button><button class="filter" data-category="Other">Other</button></div><div class="grid" id="products"><div class="loading">Opening the collection…</div></div></section>
 <section class="section story" id="story"><div class="storybox"><strong>NOT MADE<br>TO BLEND IN.</strong></div><div><div class="eyebrow">The Velora point of view</div><h2>Small details.<br>Stronger identity.</h2><p>Velora Jewells is for expressive styling — from symbolic pendants to everyday chains and dark romantic accents. Choose a piece that feels like you.</p><p class="muted">Every product's price, stock and availability should be confirmed on its live product listing. We never mark an order paid until a payment provider confirms it.</p><a class="link" href="#shop">Explore the collection ↗</a></div></section>
