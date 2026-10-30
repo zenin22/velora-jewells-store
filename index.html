@@ -585,15 +585,6 @@ const money=n=>'₹'+Number(n||0).toLocaleString('en-IN');
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600)}
 
-async function applyStoreAssets(){
- if(!db)return;
- try{
-  const {data,error}=await db.from('site_assets').select('asset_key,public_url');
-  if(error)throw error;
-  const assets=Object.fromEntries((data||[]).map(a=>[a.asset_key,a.public_url]));
-  document.querySelectorAll('[data-site-asset]').forEach(img=>{const url=assets[img.dataset.siteAsset];if(url)img.src=url});
- }catch(err){console.warn('Store appearance could not be loaded',err)}
-}
 function logEvent(type,pid){try{if(db)db.from('cart_events').insert({session_id:getSessionId(),product_id:pid||null,event_type:type,quantity:1}).then(()=>{}).catch(()=>{})}catch{}}
 function getSessionId(){let s=localStorage.getItem('velora_session');if(!s){s=crypto.randomUUID();localStorage.setItem('velora_session',s)}return s}
 function iconFor(p){return ({Pendants:'✧',Chains:'⌁',Bracelets:'◈',Rings:'◉'})[p.category]||'✦'}
@@ -654,7 +645,7 @@ document.getElementById('checkoutForm').addEventListener('submit',async e=>{
    try{
     const vr=await fetch(SUPABASE_URL+'/functions/v1/verify-payment',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({...payment,customer,items,payment_method})});
     const verified=await vr.json();if(!vr.ok)throw new Error(verified.error||'Payment verification failed.');
-    cart={};saveCart();await applyStoreAssets();loadProducts();document.getElementById('checkoutForm').style.display='none';document.getElementById('cartOverlay').classList.remove('open');
+    cart={};saveCart();loadProducts();document.getElementById('checkoutForm').style.display='none';document.getElementById('cartOverlay').classList.remove('open');
     toast('Order confirmed: '+verified.order.order_number);
     alert('Thank you for shopping with Velora Jewells!\nOrder: '+verified.order.order_number+'\nProduct subtotal: '+money(verified.order.subtotal_inr)+'\nPaid now: '+money(verified.order.paid_amount_inr)+'\nDue at delivery: '+money(verified.order.amount_due_inr));
    }catch(ex){err.textContent=ex.message+' Do not submit another payment if money was deducted; contact support with the payment ID.';btn.disabled=true;btn.textContent='Payment review needed';}
@@ -723,6 +714,6 @@ document.getElementById('accountGoogle').addEventListener('click',async()=>{if(!
 document.getElementById('accountSignOut').addEventListener('click',async()=>{await db.auth.signOut();setAccountMode('signin');document.getElementById('accountSwitch').style.display='inline-block';document.getElementById('accountMessage').textContent='You have signed out.'});
 db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';if(session&&new URLSearchParams(location.search).has('account'))showAccount();});
 if(new URLSearchParams(location.search).has('account')){setTimeout(showAccount,250);}
-document.getElementById('year').textContent=new Date().getFullYear();renderCart();applyStoreAssets();loadProducts();
+document.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
 </script>
 </body></html>
