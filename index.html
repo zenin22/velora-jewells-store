@@ -569,7 +569,7 @@ async function applyStoreAssets(){
   const assets=Object.fromEntries((data||[]).map(a=>[a.asset_key,a.public_url]));
   if(assets.hero){
    const hero=document.querySelector('.hero');
-   if(hero){hero.style.backgroundImage='linear-gradient(90deg,#030303 0%,#030303b8 17%,#03030370 42%,#03030318 76%,transparent 100%),linear-gradient(0deg,#030303 0%,transparent 34%,#03030312 100%),url("'+assets.hero.replace(/"/g,'%22')+'")';}
+   if(hero){hero.style.backgroundImage='linear-gradient(90deg,#030303 0%,#03030385 17%,#03030338 42%,#03030308 76%,transparent 100%),linear-gradient(0deg,#030303 0%,transparent 34%,#03030308 100%),url("'+assets.hero.replace(/"/g,'%22')+'")';hero.style.backgroundSize='cover,cover,cover';}const style=document.createElement('style');style.textContent='.hero:before{background:linear-gradient(90deg,#030303 0%,#03030370 20%,#03030338 43%,#03030308 72%,transparent 100%)!important}.hero:after{background:linear-gradient(0deg,#030303 0%,transparent 34%,#03030308 100%)!important}';document.head.appendChild(style);
   }
   document.querySelectorAll('[data-site-asset]').forEach(img=>{const url=assets[img.dataset.siteAsset];if(url)img.src=url});
  }catch(err){console.warn('Store appearance could not be loaded',err)}
@@ -702,6 +702,6 @@ document.getElementById('accountGoogle').addEventListener('click',async()=>{if(!
 document.getElementById('accountSignOut').addEventListener('click',async()=>{await db.auth.signOut();setAccountMode('signin');document.getElementById('accountSwitch').style.display='inline-block';document.getElementById('accountMessage').textContent='You have signed out.'});
 db?.auth.onAuthStateChange((_event,session)=>{document.getElementById('accountBtn').textContent=session?'My profile':'Sign in';if(session&&new URLSearchParams(location.search).has('account'))showAccount();});
 if(new URLSearchParams(location.search).has('account')){setTimeout(showAccount,250);}
-document.getElementById('year').textContent=new Date().getFullYear();renderCart();loadProducts();
+document.getElementById('year').textContent=new Date().getFullYear();renderCart();applyStoreAssets();loadProducts();
 </script>
 </body></html>
