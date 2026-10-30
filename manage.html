@@ -225,6 +225,7 @@ async function load(){
  const names=['products','orders','customer profiles','wishlist items','store activity','order status history','payment audit events','private product costs','order email notifications'];
  for(let i=0;i<results.length;i++){if(results[i].error)throw new Error(names[i]+': '+results[i].error.message)}
  products=results[0].data||[];orders=results[1].data||[];customers=results[2].data||[];wishlists=results[3].data||[];activityEvents=results[4].data||[];statusHistory=results[5].data||[];paymentEvents=results[6].data||[];productCosts=new Map((results[7].data||[]).map(c=>[c.product_id,Number(c.cost_price_inr)]));orderEmailNotifications=results[8].data||[];
+ const assetResult=await db.from('site_assets').select('asset_key,public_url');if(assetResult.error)throw new Error('Store appearance: '+assetResult.error.message);siteAssets=new Map((assetResult.data||[]).map(a=>[a.asset_key,a.public_url]));
  render();renderOrders();renderCustomers();renderWishlists();renderActivity();renderAudit();
 }
 function renderOrders(){
