@@ -12,8 +12,8 @@
 <div class="field"><label for="line1">House / street / area *</label><input id="line1" required minlength="5" autocomplete="address-line1"></div>
 <div class="field"><label for="line2">Landmark (optional)</label><input id="line2" autocomplete="address-line2"></div>
 <div class="two"><div class="field"><label for="city">City *</label><input id="city" required autocomplete="address-level2"></div><div class="field"><label for="state">State *</label><input id="state" required autocomplete="address-level1"></div></div>
-<div class="two"><div class="field"><label for="pin">PIN code *</label><input id="pin" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autocomplete="postal-code"></div><div class="field"><label for="payment">Payment method *</label><select id="payment"><option value="prepaid">Prepaid — full payment</option><option value="cod">COD — ₹70 advance online</option></select></div></div>
-<div class="note" id="paymentNote">Prepaid: pay the full product subtotal online. Free shipping.</div>
+<div class="two"><div class="field"><label for="pin">PIN code *</label><input id="pin" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autocomplete="postal-code"></div><div class="field"><label for="payment">Payment method *</label><select id="payment"><option value="cod" selected>Cash on Delivery — ₹70 UPI advance</option></select></div></div>
+<div class="note" id="paymentNote">COD: pay ₹70 advance by UPI. Remaining product amount is due at delivery. Free shipping.</div>
 <button class="btn" id="payButton" type="submit">Pay securely & place order</button><div class="error" id="error" role="status"></div>
 </form></section>
 <aside class="panel"><h2>Your order</h2><div class="items" id="items"><div class="empty">Loading your bag…</div></div><div class="sum"><span>Product subtotal</span><strong id="subtotal">₹0</strong></div><div class="sum"><span>Shipping</span><strong>Free</strong></div><div class="sum total"><span>Total</span><strong id="total">₹0</strong></div><div class="note">Minimum product subtotal is ₹500. For COD, ₹70 is paid online now and the remaining product amount is due at delivery.</div></aside></div>
