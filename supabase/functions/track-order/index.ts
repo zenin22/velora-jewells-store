@@ -33,7 +33,7 @@ Deno.serve(async (req: Request) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data, error } = await db.from("orders")
-      .select("order_number,order_status,payment_status,payment_method,tracking_company,tracking_number,tracking_url,created_at")
+      .select("order_number,order_status,payment_status,payment_method,tracking_company,tracking_number,tracking_url,created_at,upi_reference,payment_submitted_at,payment_verified_at")
       .eq("order_number", orderNumber)
       .eq("customer_phone", phone)
       .maybeSingle();
@@ -62,6 +62,9 @@ Deno.serve(async (req: Request) => {
         tracking_number: data.tracking_number,
         tracking_url: trackingUrl,
         created_at: data.created_at,
+        upi_reference: data.upi_reference,
+        payment_submitted_at: data.payment_submitted_at,
+        payment_verified_at: data.payment_verified_at,
       },
     });
   } catch (error) {
