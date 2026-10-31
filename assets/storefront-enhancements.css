@@ -1,0 +1,44 @@
+/* Velora storefront discovery features */
+.account-nav{display:flex;align-items:center;gap:9px}
+.search-overlay{position:fixed;inset:0;z-index:60;background:#000d;display:none;align-items:flex-start;justify-content:center;padding:9vh 18px 24px;backdrop-filter:blur(8px)}
+.search-overlay.open{display:flex}
+.search-panel{width:min(760px,100%);max-height:82vh;overflow:auto;background:#100b0e;border:1px solid #6c4b38;box-shadow:0 30px 100px #000d;padding:26px}
+.search-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.search-head h2{font:500 38px 'Cormorant Garamond',serif;margin:7px 0 0}
+#storeSearchInput{width:100%;background:#070506;border:1px solid #6d5140;color:#f5eee7;padding:16px;font-size:14px;outline:none}
+#storeSearchInput:focus{border-color:#c7a477}
+.search-hint{color:#b6a6a0;font-size:11px;padding:14px 0}
+.search-results{display:grid;gap:8px}
+.search-result{display:grid;grid-template-columns:62px 1fr auto;gap:13px;align-items:center;padding:9px;border:1px solid #352522;background:#0b0809;color:#f5eee7;text-align:left;cursor:pointer}
+.search-result:hover{border-color:#c7a477;background:#181014}
+.search-result img{width:62px;height:62px;object-fit:cover;background:#211519}
+.search-result strong{display:block;font:500 19px 'Cormorant Garamond',serif}
+.search-result small{color:#b6a6a0;font-size:10px}
+.search-result b{color:#d6b88d;font-size:12px}
+.feature-shelf{background:linear-gradient(180deg,#080607,#0e090b)}
+.shelf-link{font-size:11px;color:#d2b48c;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #72543d;padding-bottom:5px}
+.shelf-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.shelf-card{min-width:0;border:1px solid #3f2b28;background:linear-gradient(160deg,#171013,#080607);transition:transform .25s,border-color .25s}
+.shelf-card:hover{transform:translateY(-4px);border-color:#c7a477}
+.shelf-photo{height:245px;background:#171013;overflow:hidden;cursor:pointer}
+.shelf-photo img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+.shelf-card:hover .shelf-photo img{transform:scale(1.04)}
+.shelf-info{padding:14px}
+.shelf-info small{color:#c7a477;font-size:9px;letter-spacing:1.6px;text-transform:uppercase}
+.shelf-info h3{font:500 22px 'Cormorant Garamond',serif;margin:7px 0}
+.shelf-price{font-size:13px;font-weight:700;margin:9px 0 12px}
+.shelf-price del{color:#8c7b75;font-size:11px;margin-left:7px;font-weight:400}
+.shelf-add{width:100%;padding:10px;border:1px solid #8b6a4b;background:transparent;color:#ead8c2;text-transform:uppercase;font-size:10px;letter-spacing:1px}
+.shelf-add:hover{background:#c7a477;color:#090607}
+.shelf-add:disabled{opacity:.5;cursor:not-allowed}
+.shelf-empty{grid-column:1/-1;padding:25px;border:1px dashed #49352d;color:#b6a6a0;font-size:12px}
+.velora-faq{background:#0b0809}
+.faq-list{max-width:900px;border-top:1px solid #46332c}
+.faq-list details{border-bottom:1px solid #46332c;padding:19px 3px}
+.faq-list summary{cursor:pointer;list-style:none;font:500 22px 'Cormorant Garamond',serif;color:#f1e3d1;display:flex;justify-content:space-between;gap:15px}
+.faq-list summary::-webkit-details-marker{display:none}
+.faq-list summary:after{content:'+';color:#c7a477;font:22px 'DM Sans',sans-serif}
+.faq-list details[open] summary:after{content:'−'}
+.faq-list p{color:#b6a6a0;font-size:12px;line-height:1.8;margin:13px 35px 0 0}
+@media(max-width:850px){.shelf-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.shelf-photo{height:200px}.account-nav{gap:5px}.account-nav .navbtn{padding:8px 10px;font-size:9px}}
+@media(max-width:420px){.shelf-photo{height:155px}.shelf-info{padding:10px}.shelf-info h3{font-size:18px}.search-panel{padding:17px}.search-result{grid-template-columns:52px 1fr auto}.search-result img{width:52px;height:52px}}
