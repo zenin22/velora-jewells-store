@@ -12,6 +12,20 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return reply({ error: "Method not allowed" }, 405);
 
+  // COD is handled by create-cod-order and must never depend on Razorpay.
+  // Reject COD here before reading gateway secrets so a stale/misrouted COD
+  // request cannot show the Razorpay configuration error.
+  let requestedMethod: string | undefined;
+  try {
+    const incoming = await req.clone().json();
+    requestedMethod = incoming?.payment_method;
+  } catch {
+    return reply({ error: "Invalid checkout request." }, 400);
+  }
+  if (requestedMethod === "cod") {
+    return reply({ error: "COD checkout uses the separate COD order flow. Refresh checkout and choose Cash on Delivery again." }, 400);
+  }
+
   const keyId = Deno.env.get("RAZORPAY_KEY_ID");
   const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
