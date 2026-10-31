@@ -29,7 +29,7 @@
  }
  document.addEventListener('click',e=>{
   const open=e.target.closest('[data-open-product]');if(open){openProductDetail(open.dataset.openProduct);return}
-  const order=e.target.closest('[data-shelf-order]');if(order){const p=allProducts.find(x=>String(x.id)===order.dataset.shelfOrder);if(!p||p.stock_quantity<1)return;cart[p.id]=Math.min((cart[p.id]||0)+1,p.stock_quantity);saveCart();logEvent('add_to_cart',p.id);location.href='checkout.html';return}
+  const order=e.target.closest('[data-shelf-order]');if(order){const p=allProducts.find(x=>String(x.id)===order.dataset.shelfOrder);if(!p||p.stock_quantity<1)return;localStorage.setItem('velora_buy_now',JSON.stringify({id:String(p.id),quantity:1}));logEvent('checkout_started',p.id);location.href='checkout.html?buy=1';return}
   const add=e.target.closest('[data-shelf-add]');if(add){const p=allProducts.find(x=>String(x.id)===add.dataset.shelfAdd);if(!p||p.stock_quantity<1)return;cart[p.id]=Math.min((cart[p.id]||0)+1,p.stock_quantity);saveCart();logEvent('add_to_cart',p.id);toast('Added to your bag')}
   const all=e.target.closest('[data-show-all]');if(all){activeProductView='all';activeCategory='All';renderProducts();document.querySelectorAll('.filter').forEach(x=>x.classList.toggle('active',x.dataset.category==='All'))}
  });
